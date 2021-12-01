@@ -8,7 +8,7 @@ Sometimes a `day_xx.nice.js` is there, though.
 
 ### Diary
 
-* `day 01:` joined the races, with just xx hrs of delay 🐌🐌🐌
+* `day 01:` joined the races, with just 16 hrs of delay 🐌🐌🐌
 
 ### Track record
 My ranking placements and final times for puzzle 1 and 2 by days. The '_%_'
@@ -18,6 +18,8 @@ the Europeans (and Africans, too) an unfair advantage here. 😜
 
 | day | Rank 1 | Time 1 | Rank 2 | Time 2 | % |
 | ---: | ---: | :---: | ---: | :---: |---: |
-| 1 | 108496 | - | 101541 | - | |
+| 1 | 87733 | 16:09:30 | 77832 | 16:26:49 | |
 
+
+1  77878  11275  *********************************** ******
 ![](quote.png)

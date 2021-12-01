@@ -29,7 +29,7 @@ const execute = (label, fn, ...args) => {
 }
 
 const assertionHook = (callback) => {
-  assert.hook(callback)
+  assert.beforeThrow(callback)
   return assert
 }
 
