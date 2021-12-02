@@ -30,6 +30,7 @@ const parseInput = s => {
   return Number.parseInt(s, 10)
 }
 
+//  Count the values bigger than previous.
 const algorithm1 = (readings) => {
   let prev = undefined
 
@@ -40,6 +41,7 @@ const algorithm1 = (readings) => {
   }, 0)
 }
 
+//  Count the averages of 3 bigger the previous.
 const algorithm2 = (readings) => {
   const sums = new Array(readings.length - 2)
 
@@ -49,12 +51,14 @@ const algorithm2 = (readings) => {
   return algorithm1(sums)
 }
 
-const compute = (algorithm, dataSet = datasetNumber) => {
-  let input = rawInput[dataSet].split('\n')
+const compute = (algorithm, dataSet = rawInput[datasetNumber]) => {
+  if (!dataSet) return 'no data'
 
-  input = input.map(v => parseInput(v)) // .sort((a, b) => a - b)
+  dataSet = dataSet.split('\n')
 
-  return algorithm(input)
+  dataSet = dataSet.map(v => parseInput(v)) // .sort((a, b) => a - b)
+
+  return algorithm(dataSet)
 }
 
 execute('puzzle #1', compute, algorithm1)

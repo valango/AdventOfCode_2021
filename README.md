@@ -22,4 +22,5 @@ the Europeans (and Africans, too) an unfair advantage here. 😜
 
 
 1  77878  11275  *********************************** ******
+
 ![](quote.png)

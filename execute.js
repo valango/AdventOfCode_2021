@@ -15,9 +15,9 @@ const usecsFrom = t0 => {
   return (t1[0] * 1e9 + t1[1]) / 1000
 }
 
-const execute = (label, fn, ...args) => {
-  const t0 = process.hrtime(), n = exports.datasetNumber
-  let result = fn.apply(null, args)
+const execute = (label, compute, ...args) => {
+  const t0 = process.hrtime(), n = execute.datasetNumber
+  let result = compute(...args)
   const usecs = Math.floor(usecsFrom(t0)) + ''
 
   if (typeof result === 'bigint' && result < MAXN) {
@@ -53,6 +53,6 @@ if (process.argv.length > 2) {
   }
 }
 
-exports = module.exports = execute
+module.exports = execute
 
-Object.assign(exports, { assert, assertionHook, datasetNumber, execute })
+Object.assign(execute, { assert, assertionHook, datasetNumber, execute })
