@@ -1,5 +1,5 @@
 'use strict'
-const THIS = 'day-01'
+const THIS = 'day01'
 
 const rawInput = []
 //  The actual input

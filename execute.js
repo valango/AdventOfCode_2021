@@ -33,6 +33,7 @@ const assertionHook = (callback) => {
   return assert
 }
 
+const appName = basename(require.main.filename)
 let datasetNumber = 0
 
 if (process.argv.length > 2) {
@@ -40,7 +41,6 @@ if (process.argv.length > 2) {
   datasetNumber = 1 * arg
 
   if (!(datasetNumber >= 0)) {
-    const appName = basename(require.main.filename)
     const usage = `usage: node ${appName} [<number-of-dataset>]\n`
 
     if ('-h --help help'.split(' ').includes(arg)) {
@@ -55,4 +55,4 @@ if (process.argv.length > 2) {
 
 module.exports = execute
 
-Object.assign(execute, { assert, assertionHook, datasetNumber, execute })
+Object.assign(execute, { appName, assert, assertionHook, datasetNumber, execute })
