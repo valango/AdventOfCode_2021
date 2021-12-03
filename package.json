@@ -1,10 +1,10 @@
 {
   "name": "advent-of-code-21",
   "version": "20.0.1",
-  "description": "My adventofcode.com 2021 personal progress ",
+  "description": "My AdventOfCode.com 2021 personal progress ",
   "main": "index.js",
-  "homepage": "https://github.com/valango/adventOfCode",
-  "repository": "git://github.com/valango/adventOfCode-21.git",
+  "homepage": "https://github.com/valango/AoC_2021",
+  "repository": "git://github.com/valango/AoC_2021.git",
   "author": "Villem Alango <villem.alango@gmail.com>",
   "license": "MIT",
   "keywords": [],
