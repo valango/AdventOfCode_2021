@@ -1,5 +1,5 @@
 'use strict'
-const THIS = 'day03'
+const THIS = 'day03'    //  Submarine simulation.
 
 const rawInput = []
 //  The actual input
@@ -28,58 +28,50 @@ assert.beforeThrow(() => {
 })
 //  --- End of boilerplate ---
 
-//  Submarine simulation.
-const getMostLeast = (rows) => {
-  const rowCount = rows.length, width = rows[0].length
-  let gamma = new Array(width), epsilon = new Array(width)
-  const half = rowCount / 2
+//  Compute domination for every column.
+const computeDominants = (rows) => {
+  const rowCount = rows.length, half = rowCount / 2, width = rows[0].length
+  const mostOnes = new Array(width), mostZeros = new Array(width)
+
   for (let position = 0; position < width; position += 1) {
-    let zeroes = 0, ones = 0
+    let onesCount = 0
+
     for (let i = 0; i < rowCount; ++i) {
-      if (rows[i][position] === '1') ones += 1
+      if (rows[i][position] === '1') onesCount += 1
     }
-    gamma[position] = ones > half ? '1' : '0'   //  '1' means 1 is the most common
-    epsilon[position] = ones < half ? '1' : '0' //  '1' means 0 is the most common
+    mostOnes[position] = onesCount > half ? '1' : '0'   //  '1' means 1 is dominating.
+    mostZeros[position] = onesCount < half ? '1' : '0'  //  '1' means 0 is dominating.
   }
 
-  return { gamma, epsilon, width }
+  return { mostOnes, mostZeros, width }
 }
 
 const algorithm1 = (rows) => {
-  const { gamma, epsilon } = getMostLeast(rows)
-  return Number.parseInt(gamma.join(''), 2) * Number.parseInt(epsilon.join(''), 2)
+  const { mostOnes, mostZeros } = computeDominants(rows)
+  return Number.parseInt(mostOnes.join(''), 2) * Number.parseInt(mostZeros.join(''), 2)
 }
 
-//  Modified command set.
+const computeReadings = (rows, value1, value0) => {
+  for (let pos = 0; rows.length > 1 && pos < rows[0].length; ++pos) {
+    const { mostOnes, mostZeros } = computeDominants(rows), fits = []
+
+    for (const word of rows) {
+      const dominant = mostOnes[pos] === '1' ? value1
+        : (mostZeros[pos] === '1' ? value0 : value1)
+
+      if (word[pos] === dominant) fits.push(word)
+    }
+    rows = fits
+  }
+  return rows[0]
+}
+
+//  Advanced readings interpretation.
 const algorithm2 = (rows) => {
-  let oxy = rows.slice(), co2 = oxy.slice(), width = rows[0].length
+  const oxy = computeReadings(rows, '1', '0')
+  const co2 = computeReadings(rows, '0', '1')
 
-  for (let pos = 0; pos < width; ++pos) {
-    const { gamma, epsilon } = getMostLeast(oxy)
-    const fits = []
-    for (const word of oxy) {
-      const common = gamma[pos] === '1' ? '1' : (epsilon[pos] === '1' ? '0' : '1')
-      if (word[pos] === common) {
-        fits.push(word)
-      }
-    }
-    if ((oxy = fits).length <= 1) break
-  }
-  console.log('oxy', oxy)
-
-  for (let pos = 0; pos < width; ++pos) {
-    const { gamma, epsilon } = getMostLeast(co2)
-    const fits = []
-    for (const word of co2) {
-      const common = gamma[pos] === '1' ? '0' : (epsilon[pos] === '1' ? '1' : '0')
-      if (word[pos] === common) {
-        fits.push(word)
-      }
-    }
-    if ((co2 = fits).length <= 1) break
-  }
-  console.log('co2', co2)
-  return Number.parseInt(oxy[0], 2) * Number.parseInt(co2[0], 2)
+  return Number.parseInt(oxy, 2) * Number.parseInt(co2, 2)
 }
 
 const compute = (algorithm, dataSet = rawInput[datasetNumber]) => {
@@ -97,9 +89,9 @@ execute('puzzle #1', compute, algorithm1)
 execute('puzzle #2', compute, algorithm2)
 
 /*
-puzzle #1 / dataset 0: 3309596 (198)
+puzzle #1 / dataset 0: 3309596 1: 198
 	elapsed:            1095 µsecs
 
-puzzle #2 / dataset 0: 1840311528  @23min
-	elapsed:            1056 µsecs
+puzzle #2 / dataset 0: 2981085  1: 175
+	elapsed:            4102 µsecs
  */
