@@ -43,7 +43,7 @@ const computeDominants = (rows) => {
     mostZeros[position] = onesCount < half ? '1' : '0'  //  '1' means 0 is dominating.
   }
 
-  return { mostOnes, mostZeros, width }
+  return { mostOnes, mostZeros }
 }
 
 const algorithm1 = (rows) => {
@@ -79,12 +79,9 @@ const compute = (algorithm, dataSet = rawInput[datasetNumber]) => {
 
   dataSet = dataSet.split('\n').filter(v => Boolean(v))
 
-  // dataSet = dataSet.map(v => parseInput(v)) // .sort((a, b) => a - b)
-
   return algorithm(dataSet)
 }
 
-console.log(require.main.filename)
 execute('puzzle #1', compute, algorithm1)
 execute('puzzle #2', compute, algorithm2)
 
