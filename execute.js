@@ -55,4 +55,7 @@ if (process.argv.length > 2) {
 
 module.exports = execute
 
-Object.assign(execute, { appName, assert, assertionHook, datasetNumber, execute })
+Object.assign(execute, {
+  appName, assert, assertionHook, datasetNumber, execute,
+  parseInt: (v) => Number.parseInt(v)  //  To be used as .map() argument.
+})

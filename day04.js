@@ -27,7 +27,8 @@ rawInput[1] = `7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3
 //  The 2-nd example
 rawInput[2] = ``
 
-const { assert, datasetNumber, execute } = require('./execute')
+const { assert, datasetNumber, execute, parseInt } = require('./execute')
+// const parseInt = (v) => Number.parseInt(v)
 
 assert.beforeThrow(() => {
   console.log('--- BREAKPOINT ---') //  Yeah, sometimes I have to use this!
@@ -91,10 +92,10 @@ const compute = (algorithm, dataSet = rawInput[datasetNumber]) => {
   if (dataSet.length === 0) return 'no data'
 
   const boards = [], marks = []
-  const numbers = dataSet[0].split(',').map(v => Number.parseInt(v))
+  const numbers = dataSet[0].split(',').map(parseInt)
 
   for (let i = 1, data; (data = dataSet[i]); ++i) {
-    data = data.split(/[^0123456789]+/).filter(v => Boolean(v)).map(v => Number.parseInt(v))
+    data = data.split(/[^0123456789]+/).filter(v => Boolean(v)).map(parseInt)
     boards.push(data)
     marks.push(new Uint16Array(data.length))
   }
