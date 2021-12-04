@@ -1,6 +1,6 @@
 'use strict'
 const rawInput = [require('./data/day01')]
-const {parseInt} = require('./utils')
+const { parseInt } = require('./utils')
 
 //  Count the values bigger than previous.
 const puzzle1 = (readings) => {

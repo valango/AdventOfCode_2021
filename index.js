@@ -26,8 +26,9 @@ for (const arg of argv) {
     days.add(arg.padStart(2, '0'))
   } else if (/^-\d$/.test(arg)) {
     sets.add(parseInt(arg.slice(1)))
-  } else if (arg !== 'a' && arg !== 'b') {
-    print('wrong args')
+  } else if (arg !== 'a') {
+    print(`Illegal argument: ${arg}\n`)
+    return 1
   }
 }
 
@@ -42,7 +43,7 @@ if (argv.includes('a')) {
   }
 }
 
-sets = argv.includes('b') ? [2, 1, 0] : (sets.size ? Array.from(sets).sort().reverse() : [0])
+sets = sets.size ? Array.from(sets).sort().reverse() : [2, 1, 0]
 
 const execute = (puzzle, data) => {
   const t0 = process.hrtime()
@@ -65,8 +66,11 @@ for (const day of days) {
     if ((ds = loadable.parse(dsn))) {
       print(`day${day}, set #${dsn}\n`)
       for (let n = 0; n <= 1; ++n) {
+        print(`\tpuzzle-${n + 1} `)
         if ((res = execute(loadable.puzzles[n], ds))) {
-          print(`\tpuzzle-${n + 1} (${res.usecs.padStart(15)} µsecs): ${res.result}\n`)
+          print(`(${res.usecs.padStart(15)} µsecs): ${res.result}\n`)
+        } else {
+          print(': n/a\n')
         }
       }
       ++count

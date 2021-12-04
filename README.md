@@ -31,6 +31,5 @@ day will run.
 
 The following command line parameters apply:
 * an integer: number for a day (several numbers may be supplied);
-* -0, -1, -2: use main dataset (default) or some with higher number.
+* -0, -1, -2: use main dataset or some with higher number (default: all datasets).
 * 'a': all - puzzles for existing days will be solved (overrides dy numbers if any);
-* 'b': both - puzzles will be solved with all datasets (overrides dataset numbers if any).
