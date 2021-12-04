@@ -1,36 +1,10 @@
 'use strict'
-const THIS = 'day02'
 
-const rawInput = []
-//  The actual input
-rawInput[0] = require('./data/' + THIS)
-//  The 1-st example
-rawInput[1] = `
-forward 5
-down 5
-forward 8
-up 3
-down 8
-forward 2`
-//  The 2-nd example
-rawInput[2] = ``
-
-const { assert, datasetNumber, execute } = require('./execute')
-
-assert.beforeThrow(() => {
-  console.log('--- BREAKPOINT ---') //  Yeah, sometimes I have to use this!
-})
-//  --- End of boilerplate ---
-
-const parseInput = s => {
-  const pair = s.split(' ')
-  // let v = s.replace(/a/g, '0').replace(/b/g, '1')
-  pair[1] = Number.parseInt(pair[1], 10)
-  return pair
-}
+const rawInput = [require('./data/day02')]
+const { assert } = require('./utils')
 
 //  Submarine simulation.
-const algorithm1 = (commands) => {
+const puzzle1 = (commands) => {
   let x = 0, depth = 0
 
   for (const [command, value] of commands) {
@@ -51,7 +25,7 @@ const algorithm1 = (commands) => {
 }
 
 //  Modified command set.
-const algorithm2 = (commands) => {
+const puzzle2 = (commands) => {
   let aim = 0, x = 0, depth = 0
 
   for (const [command, value] of commands) {
@@ -69,24 +43,34 @@ const algorithm2 = (commands) => {
   return x * depth
 }
 
-const compute = (algorithm, dataSet = rawInput[datasetNumber]) => {
-  if (!dataSet) return 'no data'
+const parse = (dsn) => {
+  let data = rawInput[dsn]
 
-  dataSet = dataSet.split('\n').filter(v => Boolean(v))
+  if (data && (data = data.split('\n').filter(v => Boolean(v))).length) {
+    return data.map(str => {
+      const pair = str.split(' ')
 
-  dataSet = dataSet.map(v => parseInput(v)) // .sort((a, b) => a - b)
-
-  return algorithm(dataSet)
+      pair[1] = Number.parseInt(pair[1], 10)
+      return pair
+    }) // .sort((a, b) => a - b)
+  }
 }
 
-console.log(require.main.filename)
-execute('puzzle #1', compute, algorithm1)
-execute('puzzle #2', compute, algorithm2)
+rawInput[1] = `
+forward 5
+down 5
+forward 8
+up 3
+down 8
+forward 2`
+
+module.exports = { parse, puzzles: [puzzle1, puzzle2] }
 
 /*
-puzzle #1 / dataset 0: 2073315
-	elapsed:            1211 µsecs   @15min
-
-puzzle #2 / dataset 0: 1840311528  @23min
-	elapsed:            1056 µsecs
+day02, set #1
+	puzzle-1 (            123 µsecs): 150         @15min
+	puzzle-2 (             70 µsecs): 900         @23min
+day02, set #0
+	puzzle-1 (            384 µsecs): 2073315
+	puzzle-2 (            391 µsecs): 1840311528
  */

@@ -1,32 +1,5 @@
 'use strict'
-const THIS = 'day03'    //  Submarine simulation.
-
-const rawInput = []
-//  The actual input
-rawInput[0] = require('./data/' + THIS)
-//  The 1-st example
-rawInput[1] = `
-00100
-11110
-10110
-10111
-10101
-01111
-00111
-11100
-10000
-11001
-00010
-01010`
-//  The 2-nd example
-rawInput[2] = ``
-
-const { assert, datasetNumber, execute } = require('./execute')
-
-assert.beforeThrow(() => {
-  console.log('--- BREAKPOINT ---') //  Yeah, sometimes I have to use this!
-})
-//  --- End of boilerplate ---
+const rawInput = [require('./data/day03')]
 
 //  Compute domination for every column.
 const computeDominants = (rows) => {
@@ -46,7 +19,7 @@ const computeDominants = (rows) => {
   return { mostOnes, mostZeros }
 }
 
-const algorithm1 = (rows) => {
+const puzzle1 = (rows) => {
   const { mostOnes, mostZeros } = computeDominants(rows)
   return Number.parseInt(mostOnes.join(''), 2) * Number.parseInt(mostZeros.join(''), 2)
 }
@@ -67,28 +40,42 @@ const computeReadings = (rows, value1, value0) => {
 }
 
 //  Advanced readings interpretation.
-const algorithm2 = (rows) => {
+const puzzle2 = (rows) => {
   const oxy = computeReadings(rows, '1', '0')
   const co2 = computeReadings(rows, '0', '1')
 
   return Number.parseInt(oxy, 2) * Number.parseInt(co2, 2)
 }
 
-const compute = (algorithm, dataSet = rawInput[datasetNumber]) => {
-  if (!dataSet) return 'no data'
+const parse = (dsn) => {
+  let data = rawInput[dsn]
 
-  dataSet = dataSet.split('\n').filter(v => Boolean(v))
-
-  return algorithm(dataSet)
+  if (data && (data = data.split('\n').filter(v => Boolean(v))).length) {
+    return data
+  }
 }
 
-execute('puzzle #1', compute, algorithm1)
-execute('puzzle #2', compute, algorithm2)
+rawInput[1] = `
+00100
+11110
+10110
+10111
+10101
+01111
+00111
+11100
+10000
+11001
+00010
+01010`
+
+module.exports = { parse, puzzles: [puzzle1, puzzle2] }
 
 /*
-puzzle #1 / dataset 0: 3309596 1: 198
-	elapsed:            1095 µsecs
-
-puzzle #2 / dataset 0: 2981085  1: 175
-	elapsed:            4102 µsecs
+day03, set #1
+	puzzle-1 (            126 µsecs): 198
+	puzzle-2 (            295 µsecs): 230
+day03, set #0
+	puzzle-1 (            592 µsecs): 3309596
+	puzzle-2 (           3401 µsecs): 2981085
  */

@@ -1,37 +1,9 @@
 'use strict'
-const THIS = 'day01'
-
-const rawInput = []
-//  The actual input
-rawInput[0] = require('./data/' + THIS)
-//  The 1-st example
-rawInput[1] = `199
-200
-208
-210
-200
-207
-240
-269
-260
-263`
-//  The 2-nd example
-rawInput[2] = ``
-
-const { assert, datasetNumber, execute } = require('./execute')
-
-assert.beforeThrow(() => {
-  console.log('--- BREAKPOINT ---') //  Yeah, sometimes I have to use this!
-})
-//  --- End of boilerplate ---
-
-const parseInput = s => {
-  // let v = s.replace(/a/g, '0').replace(/b/g, '1')
-  return Number.parseInt(s, 10)
-}
+const rawInput = [require('./data/day01')]
+const {parseInt} = require('./utils')
 
 //  Count the values bigger than previous.
-const algorithm1 = (readings) => {
+const puzzle1 = (readings) => {
   let prev = undefined
 
   return readings.reduce((result, value) => {
@@ -42,32 +14,41 @@ const algorithm1 = (readings) => {
 }
 
 //  Count the averages of 3 bigger the previous.
-const algorithm2 = (readings) => {
+const puzzle2 = (readings) => {
   const sums = new Array(readings.length - 2)
 
   for (let i = 0; i < readings.length - 2; ++i) {
     sums[i] = readings[i] + readings[i + 1] + readings[i + 2]
   }
-  return algorithm1(sums)
+  return puzzle1(sums)
 }
 
-const compute = (algorithm, dataSet = rawInput[datasetNumber]) => {
-  if (!dataSet) return 'no data'
+const parse = (dsn) => {
+  let data = rawInput[dsn]
 
-  dataSet = dataSet.split('\n')
-
-  dataSet = dataSet.map(v => parseInput(v)) // .sort((a, b) => a - b)
-
-  return algorithm(dataSet)
+  if (data && (data = data.split('\n').filter(v => Boolean(v))).length) {
+    return data.map(parseInt) // .sort((a, b) => a - b)
+  }
 }
 
-execute('puzzle #1', compute, algorithm1)
-execute('puzzle #2', compute, algorithm2)
+rawInput[1] = `199
+200
+208
+210
+200
+207
+240
+269
+260
+263`
+
+module.exports = { parse, puzzles: [puzzle1, puzzle2] }
 
 /*
-puzzle #1 / dataset 0: 1759
-	elapsed:             613 µsecs
-
-puzzle #2 / dataset 0: 1805
-	elapsed:             547 µsecs
+day01, set #1
+	puzzle-1 (             73 µsecs): 7
+	puzzle-2 (             43 µsecs): 5
+day01, set #0
+	puzzle-1 (             51 µsecs): 1759
+	puzzle-2 (            252 µsecs): 1805
  */
