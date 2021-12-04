@@ -2,36 +2,36 @@
 const rawInput = [require('./data/day04')]
 const { parseInt } = require('./utils')
 
-const score = (board, marks, number) => {
+const score = (board, markPads, number) => {
   let sum = 0
   for (let i = 0; i < 25; ++i) {
-    if (marks[i] === 0) sum += board[i]
+    if (markPads[i] === 0) sum += board[i]
   }
   return number * sum
 }
 
 //  Find the winning board, mark it and return the score or just the winning number.
-const puzzle1 = ({ numbers, boards, marks, won }, justBoard = false) => {
+const puzzle1 = ({ numbers, boards, markPads, won }, justBoard = false) => {
   for (const n of numbers) {
     for (let ib = 0, board; (board = boards[ib]); ++ib) {
       if (!won.includes(ib)) {
-        let i = board.indexOf(n), j
+        let i = board.indexOf(n), j, marks = markPads[ib]
 
-        if (i >= 0 && marks[ib][i] === 0) {
-          ++marks[ib][i]
+        if (i >= 0 && marks[i] === 0) {
+          ++marks[i]
           //  Check if we won: by column, than by row.
-          for (j = i % 5; j < 25 && marks[ib][j]; j += 5) {}
+          for (j = i % 5; j < 25 && marks[j]; j += 5) {}
 
           if (j >= 25) {
             won.push(ib)
-            return justBoard ? n : score(board, marks[ib], n)
+            return justBoard ? n : score(board, marks, n)
           }
 
-          for (j = Math.floor(i / 5) * 5, i = 0; i < 5 && marks[ib][i + j]; ++i) {}
+          for (j = Math.floor(i / 5) * 5, i = 0; i < 5 && marks[i + j]; ++i) {}
 
           if (i === 5) {
             won.push(ib)
-            return justBoard ? n : score(board, marks[ib], n)
+            return justBoard ? n : score(board, marks, n)
           }
         }
       }
@@ -50,23 +50,23 @@ const puzzle2 = (data) => {
 
   const ib = data.won.pop()
 
-  return score(data.boards[ib], data.marks[ib], lastNumber)
+  return score(data.boards[ib], data.markPads[ib], lastNumber)
 }
 
 const parse = (dsn) => {
   let data = rawInput[dsn]
 
-  if (data && (data = data.split('\n\n').filter(v => Boolean(v))).length) {
-    const boards = [], marks = []
+  if (data && (data = data.split(/\n\n\s?/).filter(v => Boolean(v))).length) {
+    const boards = [], markPads = []
     const numbers = data[0].split(',').map(parseInt)
 
     for (let i = 1, row; (row = data[i]); ++i) {
-      row = row.split(/[^0123456789]+/).filter(v => Boolean(v)).map(parseInt)
+      row = row.split(/\s+/).map(parseInt)
       boards.push(row)
-      marks.push(new Uint16Array(row.length))
+      markPads.push(new Uint16Array(row.length))
     }
 
-    return { numbers, boards, marks, won: [] }
+    return { numbers, boards, markPads, won: [] }
   }
 }
 

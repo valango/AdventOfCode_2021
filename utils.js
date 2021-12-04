@@ -5,7 +5,7 @@ const assert = require('assert-fine')
 
 module.exports = {
   assert,
-  parseInt: (v) => Number.parseInt(v),  //  To be used as .map() argument.
+  parseInt: (v) => Number.parseInt(v.trim()),  //  To be used as .map() argument.
   print: msg => process.stdout.write(msg),
   usecsFrom: t0 => {
     const t1 = process.hrtime(t0)
