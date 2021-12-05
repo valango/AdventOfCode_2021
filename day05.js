@@ -1,37 +1,28 @@
 'use strict'
-const rawInput = [require('./data/day05')]
-const { assert, parseInt } = require('./utils')
+/* eslint no-constant-condition: "off" */
 
-const addPoint = (field, [x, y]) => {
+const rawInput = [require('./data/day05')]
+const { parseInt } = require('./utils')
+
+const addPoint = (field, x, y) => {
   let key = x + ',' + y, v = field.get(key)
 
-  /*  if (key === '7,4') {
-     key = '7,4'
-   } */
   field.set(key, v === undefined ? 1 : v + 1)
 }
 
-const addHorVert = (data) => {
+const processLines = (lines, field, justDiagonals) => {
   const remaining = []
 
-  for (let d, i = 0, j, line; (line = data[i]); ++i) {
-    const start = line.slice(0, 2)
+  for (const line of lines) {
+    let [x, y, x1, y1] = line
+    let dx = x1 - x, lx = Math.abs(dx), dy = y1 - y, ly = Math.abs(dy)
 
-    j = -1
-    if (line[0] === line[2]) {
-      j = 1
-    }
-    if (line[1] === line[3]) {
-      j = 0
-    }
-    if (j >= 0) {
-      d = line[j] > line[j + 2] ? -1 : 1
-      while (true) {
-        addPoint(data.field, start)
-        if (start[j] === line[j + 2]) {
+    if (((lx || ly) && lx === ly) === justDiagonals) {
+      for (lx && (dx /= lx), ly && (dy /= ly); true; x += dx, y += dy) {
+        addPoint(field, x, y)
+        if (x === x1 && y === y1) {
           break
         }
-        start[j] += d
       }
     } else {
       remaining.push(line)
@@ -42,6 +33,7 @@ const addHorVert = (data) => {
 
 const summarize = (field) => {
   let n = 0
+
   field.forEach((v) => {
     if (v > 1) {
       ++n
@@ -50,35 +42,17 @@ const summarize = (field) => {
   return n
 }
 
-//  In how many points the lines overlap?
+//  In how many points from rectangular lines overlap?
 const puzzle1 = (data) => {
-  data.field = new Map()
-
-  data.remaining = addHorVert(data)
+  data.remaining = processLines(data.lines, data.field, false)
 
   return summarize(data.field)
 }
 
-//  Add diagonals too
+//  Noe, take the diagonals into account, too.
 const puzzle2 = (data) => {
-  const { field, remaining } = data
-  for (let d, i = 0, j, line, start; (line = remaining[i]); ++i) {
-    d = [line[2] - line[0], line[3] - line[1]]
+  processLines(data.remaining, data.field, true)
 
-    if (Math.abs(d[0]) === Math.abs(d[1])) {
-      start = line.slice(0, 2)
-      d[0] /= Math.abs(d[0])
-      d[1] /= Math.abs(d[1])
-      while (true) {
-        addPoint(field, start)
-        if (start[0] === line[2] && start[1] === line[3]) {
-          break
-        }
-        start[0] += d[0]
-        start[1] += d[1]
-      }
-    }
-  }
   return summarize(data.field)
 }
 
@@ -86,8 +60,11 @@ const parse = (dsn) => {
   let data = rawInput[dsn]
 
   if (data && (data = data.split('\n').filter(v => Boolean(v))).length) {
-    data = data.map(row => row.split(/[^\d]+/).map(parseInt))
-    return data
+    return {
+      field: new Map(),
+      lines: data.map(row => row.split(/[^\d]+/).map(parseInt)),
+      remaining: undefined
+    }
   }
 }
 
@@ -107,9 +84,9 @@ module.exports = { parse, puzzles: [puzzle1, puzzle2] }
 
 /*
 day05, set #1
-	puzzle-1 (            317 µsecs): 5
-	puzzle-2 (             98 µsecs): 12
+	puzzle-1 (            206 µsecs): 5
+	puzzle-2 (            137 µsecs): 12
 day05, set #0
-	puzzle-1 (          52193 µsecs): 8622      73min
-	puzzle-2 (          67622 µsecs): 22037
+	puzzle-1 (          49572 µsecs): 8622
+	puzzle-2 (          50632 µsecs): 22037
  */

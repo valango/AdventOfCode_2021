@@ -14,7 +14,6 @@ module.exports = {
     'no-multiple-empty-lines': 'warn',
     'no-trailing-spaces': 'warn',
     'no-console': 'off',
-    'no-empty': 'warn',
     'no-unreachable': 'warn',
     'no-unused-vars': 'warn'
   }

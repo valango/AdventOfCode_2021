@@ -1,4 +1,6 @@
 'use strict'
+/* eslint no-empty: "off" */
+
 const rawInput = [require('./data/day04')]
 const { parseInt } = require('./utils')
 
