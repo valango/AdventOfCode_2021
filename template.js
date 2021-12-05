@@ -16,6 +16,7 @@ const parse = (dsn) => {
   }
 }
 
+//  Example data. If rawInput[2] is defined too, then 1 and 2 are for different puzzles.
 rawInput[1] = `
 `
 

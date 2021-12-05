@@ -32,6 +32,8 @@ After installing with npm or yarn, just type `./run` or `node .` and the puzzles
 day will run.
 
 The following command line parameters apply:
-* an integer: number for a day (several numbers may be supplied);
-* -0, -1, -2: use main dataset or some with higher number (default: all datasets).
-* 'a': all - puzzles for existing days will be solved (overrides dy numbers if any);
+* integer - day number(s), (default: most recent day only);
+* a: all days;
+* b: both datasets (default: main data only);
+* d: example data only (mutually exclusive with 'b' option;
+* h: print help information and terminate.
