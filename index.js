@@ -47,7 +47,7 @@ for (const arg of argv) {
 const useBoth = cliFlags.includes('b'), useDemo = cliFlags.includes('d')
 
 if (useBoth && useDemo) {
-  print(`Can not use both 'b' and 'd' options!\n`)
+  print(`Can not use both 'b' and 'd' simultaneously!\n`)
   return 1
 }
 
