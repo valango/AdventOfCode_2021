@@ -1,5 +1,5 @@
 'use strict'
-const rawInput = [require('./data/day03')]
+const rawInput = [require('./data/day03')]  //  Binary Diagnostic
 
 //  Compute domination for every column.
 const computeDominants = (rows) => {

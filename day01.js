@@ -1,5 +1,5 @@
 'use strict'
-const rawInput = [require('./data/day01')]
+const rawInput = [require('./data/day01')]  //  Sonar Sweep
 const { parseInt } = require('./utils')
 
 //  Count the values bigger than previous.
@@ -13,7 +13,7 @@ const puzzle1 = (readings) => {
   }, 0)
 }
 
-//  Count the averages of 3 bigger the previous.
+//  Count the averages of 3 bigger than previous.
 const puzzle2 = (readings) => {
   const sums = new Array(readings.length - 2)
 

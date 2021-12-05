@@ -1,16 +1,17 @@
 'use strict'
 /* eslint no-constant-condition: "off" */
 
-const rawInput = [require('./data/day05')]
+const rawInput = [require('./data/day05')]  //  Hydrothermal Venture
 const { parseInt } = require('./utils')
 
-const addPoint = (field, x, y) => {
-  let key = x + ',' + y, v = field.get(key)
+const addPoint = (map, x, y) => {
+  let key = x + ',' + y, v = map.get(key)
 
-  field.set(key, v === undefined ? 1 : v + 1)
+  map.set(key, v === undefined ? 1 : v + 1)
 }
 
-const processLines = (lines, field, justDiagonals) => {
+//  Add all line points to the map.
+const processLines = (lines, map, justDiagonals) => {
   const remaining = []
 
   for (const line of lines) {
@@ -19,7 +20,7 @@ const processLines = (lines, field, justDiagonals) => {
 
     if (((lx || ly) && lx === ly) === justDiagonals) {
       for (lx && (dx /= lx), ly && (dy /= ly); true; x += dx, y += dy) {
-        addPoint(field, x, y)
+        addPoint(map, x, y)
         if (x === x1 && y === y1) {
           break
         }
@@ -31,29 +32,27 @@ const processLines = (lines, field, justDiagonals) => {
   return remaining
 }
 
-const summarize = (field) => {
+const summarize = (map) => {
   let n = 0
 
-  field.forEach((v) => {
-    if (v > 1) {
-      ++n
-    }
+  map.forEach((v) => {
+    if (v > 1) ++n
   })
   return n
 }
 
 //  In how many points from rectangular lines overlap?
 const puzzle1 = (data) => {
-  data.remaining = processLines(data.lines, data.field, false)
+  data.remaining = processLines(data.lines, data.map, false)
 
-  return summarize(data.field)
+  return summarize(data.map)
 }
 
 //  Noe, take the diagonals into account, too.
 const puzzle2 = (data) => {
-  processLines(data.remaining, data.field, true)
+  processLines(data.remaining, data.map, true)
 
-  return summarize(data.field)
+  return summarize(data.map)
 }
 
 const parse = (dsn) => {
@@ -61,8 +60,8 @@ const parse = (dsn) => {
 
   if (data && (data = data.split('\n').filter(v => Boolean(v))).length) {
     return {
-      field: new Map(),
       lines: data.map(row => row.split(/[^\d]+/).map(parseInt)),
+      map: new Map(),
       remaining: undefined
     }
   }

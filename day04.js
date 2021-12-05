@@ -1,7 +1,7 @@
 'use strict'
 /* eslint no-empty: "off" */
 
-const rawInput = [require('./data/day04')]
+const rawInput = [require('./data/day04')]  //  Giant Squid - bingo game
 const { parseInt } = require('./utils')
 
 const score = (board, markPads, number) => {
@@ -21,17 +21,14 @@ const puzzle1 = ({ numbers, boards, markPads, won }, justBoard = false) => {
 
         if (i >= 0 && marks[i] === 0) {
           ++marks[i]
-          //  Check if we won: by column, than by row.
+          //  Check if we won: by column and if not, then by row.
           for (j = i % 5; j < 25 && marks[j]; j += 5) {}
 
-          if (j >= 25) {
-            won.push(ib)
-            return justBoard ? n : score(board, marks, n)
+          if (j < 25) {
+            for (j = Math.floor(i / 5) * 5, i = 0; i < 5 && marks[i + j]; ++i) {}
           }
 
-          for (j = Math.floor(i / 5) * 5, i = 0; i < 5 && marks[i + j]; ++i) {}
-
-          if (i === 5) {
+          if (j >= 25 || i === 5) {
             won.push(ib)
             return justBoard ? n : score(board, marks, n)
           }

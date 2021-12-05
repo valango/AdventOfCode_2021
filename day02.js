@@ -1,9 +1,9 @@
 'use strict'
 
-const rawInput = [require('./data/day02')]
-const { assert } = require('./utils')
+const rawInput = [require('./data/day02')]  //  Dive! - vehicle control simulation.
+const { assert, parseInt } = require('./utils')
 
-//  Submarine simulation.
+//  Simple command set.
 const puzzle1 = (commands) => {
   let x = 0, depth = 0
 
@@ -50,9 +50,9 @@ const parse = (dsn) => {
     return data.map(str => {
       const pair = str.split(' ')
 
-      pair[1] = Number.parseInt(pair[1], 10)
+      pair[1] = parseInt(pair[1])
       return pair
-    }) // .sort((a, b) => a - b)
+    })
   }
 }
 
