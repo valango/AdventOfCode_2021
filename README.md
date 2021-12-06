@@ -11,6 +11,8 @@ Older ones: [2020](https://github.com/valango/adventOfCode),
 * `day 03:` Actually simple stuff, but it really took some focussing (101min).
 * `day 04:` A nice one. Some time was lost for misreading the input format.
 * `day 05:` Simple, but... man, I hate numbers - I just can't _see_ them!.
+* `day 05:` Now, this was a good lesson - I lost at least 30mins implementing
+  _an illustration of example_, rather than the actual logic of the process. 🤬
 
 ## Track record
 My ranking placements and final times for puzzle 1 and 2 by days.<br >
@@ -20,6 +22,7 @@ only the first one, taken from
 
 | day | Rank 1 | Time 1 | Rank 2 | Time 2 | Others | Just 1|
 | ---: | ---: | :---: | ---: | :---: |---: |---: |
+| 6 | 8567 |00:30:44 | 7349 | 01:06:45 |7484|4379|
 | 5 | 8539 | 01:18:17 | 7974 | 01:44:41 |8093|1972|
 | 4 | 4087 | 00:41:37 | 4896 | 01:06:05 |6191|1630|
 | 3 | 8808 | 00:25:36 | 10369 | 01:41:35 |45825|23066|
@@ -38,3 +41,5 @@ The following command line parameters apply:
 * b: both datasets (default: main data only);
 * d: example data only (mutually exclusive with 'b' option;
 * h: print help information and terminate.
+
+**To trap failed assertions when debugging**, set a breakpoint to [index.js](./index.js) line #16.
