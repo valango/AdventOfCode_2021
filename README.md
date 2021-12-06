@@ -42,7 +42,10 @@ The following command line parameters apply:
 * d: example data only (mutually exclusive with 'b' option;
 * h: print help information and terminate.
 
-### Code and debugging
-**To trap failed assertions** when debugging, set a breakpoint to [index.js](./index.js) line #16.
+If neither 'b' nor 'd' is present, only the main dataset is used.
+If 'd' is present, and demo data is not defined, it falls back to main dataset.
 
-To start a new day, Use contents of [template.js](./template.js).
+### Code and debugging
+**To trap failed assertions** when debugging, set a breakpoint to [index.js](./index.js) line #17.
+
+To start a new day, use contents of [template.js](./template.js).
