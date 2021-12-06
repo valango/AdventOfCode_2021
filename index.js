@@ -13,7 +13,7 @@ const helpText = `Command line parameters:
   h: print this information and terminate\n\n`
 
 assert.beforeThrow((assertionError, args) => {
-  console.error('Assertion FAILED with args:', args)  //  The BREAKPOINT place!
+  console.error('Assertion FAILED with args:', args)
 })
 
 module.exports = (argv) => {
@@ -76,30 +76,34 @@ module.exports = (argv) => {
   }
 
   const runReport = (puzzle, ds, label) => {
-    const res = ds && execute(puzzle, ds)
+    const res = ds && execute(puzzle, ds, print('\t' + label))
 
-    res ? print(`\t${label}(${res.usecs.padStart(15)} µs): ${res.result} `)
-      : print(`\t${label}: n/a\t\t`)
+    print(res ? `(${res.usecs.padStart(15)} µs): ${res.result} ` : `: n/a\t\t\t`)
   }
 
   for (const day of days) {
     const loadable = require('./day' + day)
 
-    for (let d, d0, d1, n = 0; n <= 1; ++n) {
+    for (let d, d0, d1, n = 0, dLabel = 'DEMO'; n <= 1; ++n) {
       print(`day${day}, puzzle #${n + 1} `)
 
       if (useBoth || useDemo) {
         if (n && (d = loadable.parse(2)) !== undefined) {
-          d1 = d
-        } else {
-          d1 = loadable.parse(1)
+          d1 = d, dLabel = 'DEMO'
         }
-        runReport(loadable.puzzles[n], d1, 'DEMO')
+        if (d1 === undefined) {
+          d1 = loadable.parse(1)
+
+          if (!d1 && !useBoth && (d1 = loadable.parse(0))) {
+            dLabel = 'MAIN'
+          }
+        }
+        runReport(loadable.puzzles[n], d1, dLabel)
       }
 
       if (!useDemo) {
         if (d0 === undefined) d0 = loadable.parse(0)
-        runReport(loadable.puzzles[n], d0, 'REAL')
+        runReport(loadable.puzzles[n], d0, 'MAIN')
       }
       print('\n')
     }

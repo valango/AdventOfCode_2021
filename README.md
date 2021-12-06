@@ -42,4 +42,7 @@ The following command line parameters apply:
 * d: example data only (mutually exclusive with 'b' option;
 * h: print help information and terminate.
 
-**To trap failed assertions when debugging**, set a breakpoint to [index.js](./index.js) line #16.
+### Code and debugging
+**To trap failed assertions** when debugging, set a breakpoint to [index.js](./index.js) line #16.
+
+To start a new day, Use contents of [template.js](./template.js).
