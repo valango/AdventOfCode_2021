@@ -2,9 +2,19 @@
 'use strict'
 
 const assert = require('assert-fine')
+const { readFileSync } = require('fs')
 
 module.exports = {
   assert,
+  readFile: path => {
+    try {
+      return readFileSync(path) + ''
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        throw error
+      }
+    }
+  },
   parseInt: (v) => Number.parseInt(v.trim()),  //  To be used as .map() argument.
   print: msg => process.stdout.write(msg),
   say: msg => process.stderr.write(msg),

@@ -1,6 +1,6 @@
 'use strict'
-const rawInput = [require('./data/day?')]
-const { assert, parseInt } = require('./runner/utils')
+const { assert, parseInt, readFile } = require('./runner/utils')
+const rawInput = [readFile('data/day0?.txt')]
 
 const puzzle1 = (data) => {
 }

@@ -1,8 +1,8 @@
-'use strict'
+'use strict'  //  Hydrothermal Venture
 /* eslint no-constant-condition: "off" */
 
-const rawInput = [require('./data/day05')]  //  Hydrothermal Venture
-const { parseInt } = require('./runner/utils')
+const { parseInt, readFile } = require('./runner/utils')
+const rawInput = [readFile('data/day05.txt')]
 
 const addPoint = (map, x, y) => {
   let key = x + ',' + y, v = map.get(key)

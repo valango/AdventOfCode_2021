@@ -1,7 +1,4 @@
-//  data/day-01.js
-'use strict'
-
-module.exports = `123
+123
 126
 130
 137
@@ -2000,4 +1997,4 @@ module.exports = `123
 10380
 10390
 10410
-10411`
+10411

@@ -76,6 +76,8 @@ is not defined, it falls back to main dataset.
 To start with a new puzzle, first copy the contents of [template.js](./template.js) to
 a new file named like `day26.js` in project root directory and have fun coding!.
 
+It is recommended to copy the puzzle data into a text file in `data` folder.
+
 ### Debugging
 
 **To trap failed assertions** when debugging, set a breakpoint to

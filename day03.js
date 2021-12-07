@@ -1,5 +1,7 @@
-'use strict'
-const rawInput = [require('./data/day03')]  //  Binary Diagnostic
+'use strict'  //  Binary Diagnostic
+
+const { readFile } = require('./runner/utils')
+const rawInput = [readFile('data/day03.txt')]
 
 //  Compute domination for every column.
 const computeDominants = (rows) => {

@@ -1,6 +1,6 @@
-'use strict'
-const rawInput = [require('./data/day01')]  //  Sonar Sweep
-const { parseInt } = require('./runner/utils')
+'use strict'  //  Sonar Sweep
+const { parseInt, readFile } = require('./runner/utils')
+const rawInput = [readFile('data/day01.txt')]
 
 //  Count the values bigger than previous.
 const puzzle1 = (readings) => {
