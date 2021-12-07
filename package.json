@@ -1,8 +1,8 @@
 {
   "name": "advent-of-code-21",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "My AdventOfCode.com 2021 personal progress",
-  "main": "index.js",
+  "main": "run",
   "homepage": "https://github.com/valango/AdventOfCode_2021",
   "repository": "git://github.com/valango/AdventOfCode_2021.git",
   "author": "Villem Alango <villem.alango@gmail.com>",

@@ -26,7 +26,7 @@ first one, taken from
 
 | day | Rank 1 | Time 1 | Rank 2 | Time 2 | Others | Just 1|
 | ---: | ---: | :---: | ---: | :---: |---: |---: |
-| 7 | n/a | 01:30:00 | n/a | 02:00:00 |15930|1773|
+| 7 | 16732 | 01:54:24 | 15841 | 02:05:48 |15930|1773|
 | 6 | 8567 |00:30:44 | 7349 | 01:06:45 |7484|4379|
 | 5 | 8539 | 01:18:17 | 7974 | 01:44:41 |8093|1972|
 | 4 | 4087 | 00:41:37 | 4896 | 01:06:05 |6191|1630|
@@ -36,10 +36,27 @@ first one, taken from
 
 ![](quote.png)
 
-## Usage
+## Code
+The project codebase consists of daily puzzle files named like `day01.js`, universal runner code
+and module tests for runner code.
 
-After installing with npm or yarn, just type `./run` or `node .` and the puzzles from the most
-recent day will run.
+### Performance report
+The following report was generated using command `./run abm`.
+
+| day|main#1|main#2|µs1|µs2|demo#1|demo#2|µs1|µs2|
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+|01|1759|1805|90|242|7|5|72|43|
+|02|2073315|1840311528|1229|340|150|900|61|71|
+|03|3309596|2981085|583|2573|198|230|118|986|
+|04|82440|20774|296|50627|4512|1924|228|56|
+|05|8622|22037|44577|52433|5|12|187|91|
+|06|362346|1639643057051|32755|284|5934|26984457539|3082|417|
+|07|345035|97038163|3185|3950|37|168|133|143|
+
+### Usage
+
+After installing with npm or yarn, just type `./run` and the puzzles from the most
+recent puzzle file will be executed.
 
 The following command line parameters apply:
 
@@ -47,14 +64,17 @@ The following command line parameters apply:
 * a: all days;
 * b: both datasets (default: main data only);
 * d: example data only (mutually exclusive with 'b' option;
-* h: print help information and terminate.
+* h: print help information and terminate;
+* m: generate markdown output (default: text table).
 
 If neither 'b' nor 'd' is present, only the main dataset is used. If 'd' is present, and demo data
 is not defined, it falls back to main dataset.
 
-### Code and debugging
+### Coding
+
+To start with a new puzzle, first copy the contents of [template.js](./template.js) to
+a new file named like `day26.js` in project root directory and have fun coding!.
+
+### Debugging
 
 **To trap failed assertions** when debugging, set a breakpoint to [index.js](./index.js) line #17.
-
-To start a new day, use contents of [template.js](./template.js).
-

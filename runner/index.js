@@ -1,7 +1,8 @@
-//  /index.js
+//  runner/index.js
 'use strict'
 
-const { assert, print, usecsFrom } = require('./utils')
+const dumper = require('./dumper')
+const { assert, print, say, usecsFrom } = require('./utils')
 const { opendirSync } = require('fs')
 const maxN = BigInt(Number.MAX_SAFE_INTEGER)
 
@@ -10,7 +11,8 @@ const helpText = `Command line parameters:
   a: all days
   b: both datasets (default: main data only)
   d: example data only (mutually exclusive with 'b' option
-  h: print this information and terminate\n\n`
+  h: print this information and terminate
+  m: generate output as markdown table\n\n`
 
 /* istanbul ignore next */
 assert.beforeThrow((assertionError, args) => {
@@ -31,7 +33,7 @@ const parseCLI = (argv) => {
       if (arg.includes('h')) {
         return { code: 0, message: helpText }
       }
-      if (Array.from(arg).some(c => !'abd'.includes(c))) {
+      if (Array.from(arg).some(c => !'abdm'.includes(c))) {
         return { code: 1, message: `Illegal parameter '${arg}' - use -h option for help!\n` }
       }
       flags += arg
@@ -42,7 +44,7 @@ const parseCLI = (argv) => {
 
   return (useBoth && useDemo)
     ? { code: 1, message: `Can not use both 'b' and 'd' simultaneously!\n` }
-    : { allDays: flags.includes('a'), days, useBoth, useDemo }
+    : { allDays: flags.includes('a'), days, makeMarkdown: flags.includes('m'), useBoth, useDemo }
 }
 
 /**
@@ -91,51 +93,62 @@ const execute = (puzzle, data) => {
 /**
  * @param {function(*):*} puzzle
  * @param {*} data
- * @param {string} label
- * @param {function(string)} print
+ * @param {string} tag
+ * @param {function(string)} say
+ * @returns {{usecs:number, result:*}|undefined}
  */
-const runAndReport = (puzzle, data, label, print) => {
-  const res = data && execute(puzzle, data, print('\t' + label))
+const runAndReport = (puzzle, data, tag, say) => {
+  say(` ${tag}...`)
+  const res = data && execute(puzzle, data)
+  say(`\b\b\b ok`)
 
-  print(res ? `(${(res.usecs + '').padStart(15)} µs): ${res.result} ` : `: n/a\t\t\t`)
+  return res
 }
 
 /**
- * @param {Array<string>} selectedDays
+ * @param {Array<string>} days
  * @param {boolean} useBoth
  * @param {boolean} useDemo
- * @param {function(string)} print
+ * @param {function(string)} say
  * @param {Array<Object>} [modules]     - for testing only.
+ * @returns {Array<*>}
  */
-const runPuzzles = (selectedDays, { useBoth, useDemo, print }, modules = undefined) => {
-  for (const day of selectedDays) {
-    /* istanbul ignore next */
-    const loadable = modules ? modules[day] : require('./day' + day)
+const runPuzzles = (days, { useBoth, useDemo }, say, cb = undefined, modules = undefined) => {
+  const longLine = '\r'.padEnd(70) + '\r', output = []
 
-    for (let d, d0, d1, n = 0, dLabel = 'DEMO'; n <= 1; ++n) {
-      print(`day${day}, puzzle #${n + 1} `)
+  for (const day of days) {
+    /* istanbul ignore next */
+    const loadable = modules ? modules[day] : require('../day' + day), record = {}
+
+    say(`day${day}:`)
+
+    for (let d, d0, d1, n = 0, tag = 'DEMO'; n <= 1; ++n) {
+      say(`\tpuzzle #${n + 1} `)
+      // print(`day${day}, puzzle #${n + 1} `)
 
       if (useBoth || useDemo) {
         if (n && (d = loadable.parse(2)) !== undefined) {
-          d1 = d, dLabel = 'DEMO'
+          d1 = d, tag = 'DEMO'
         }
         if (d1 === undefined) {
           d1 = loadable.parse(1)
 
           if (!d1 && !useBoth && (d1 = loadable.parse(0))) {
-            dLabel = 'MAIN'
+            tag = 'MAIN'    //  Todo: clarify the logic!
           }
         }
-        runAndReport(loadable.puzzles[n], d1, dLabel, print)
+        record[n + tag] = runAndReport(loadable.puzzles[n], d1, tag, say)
       }
 
       if (!useDemo) {
         if (d0 === undefined) d0 = loadable.parse(0)
-        runAndReport(loadable.puzzles[n], d0, 'MAIN', print)
+        record[n + 'MAIN'] = runAndReport(loadable.puzzles[n], d0, 'MAIN', say)
       }
-      print('\n')
+      say(longLine)
     }
+    output.push(cb ? cb(record, day) : record)
   }
+  return output
 }
 
 /* istanbul ignore next */
@@ -148,7 +161,7 @@ exports = module.exports = (argv) => {
     }
   }
 
-  const { allDays, code, days, message, useBoth, useDemo } = parseCLI(argv)
+  const { allDays, code, days, makeMarkdown, message, useBoth, useDemo } = parseCLI(argv)
 
   if (message) {
     print(message)
@@ -164,7 +177,32 @@ exports = module.exports = (argv) => {
     return 1
   }
 
-  runPuzzles(selectedDays, { useBoth, useDemo, print })
+  const { checkRow, demoColumn, dump, dumpMdHeader, getRow } = dumper({ useBoth, useDemo }, print)
+
+  const callBack = (record, day) => {
+    let res
+    const row = getRow(day)
+
+    if ((res = record['0MAIN'])) row[1] = res.result + '', row[3] = res.usecs + ''
+    if ((res = record['1MAIN'])) row[2] = res.result + '', row[4] = res.usecs + ''
+    if ((res = record['0DEMO'])) row[demoColumn] = res.result + '', row[demoColumn + 2] = res.usecs + ''
+    if ((res = record['1DEMO'])) row[demoColumn + 1] = res.result + '', row[demoColumn + 3] = res.usecs + ''
+
+    if (makeMarkdown) {
+      print('|' + row.join('|') + '|\n')
+    } else {
+      checkRow(row)
+    }
+    return row
+  }
+
+  if (makeMarkdown) {
+    dumpMdHeader()
+  }
+
+  const lines = runPuzzles(selectedDays, { useBoth, useDemo }, say, callBack)
+
+  if (!makeMarkdown) dump(lines)
 
   return 0
 }

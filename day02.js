@@ -1,7 +1,7 @@
 'use strict'
 
 const rawInput = [require('./data/day02')]  //  Dive! - vehicle control simulation.
-const { assert, parseInt } = require('./utils')
+const { assert, parseInt } = require('./runner/utils')
 
 //  Simple command set.
 const puzzle1 = (commands) => {

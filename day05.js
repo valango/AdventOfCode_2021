@@ -2,7 +2,7 @@
 /* eslint no-constant-condition: "off" */
 
 const rawInput = [require('./data/day05')]  //  Hydrothermal Venture
-const { parseInt } = require('./utils')
+const { parseInt } = require('./runner/utils')
 
 const addPoint = (map, x, y) => {
   let key = x + ',' + y, v = map.get(key)

@@ -2,7 +2,7 @@
 /* eslint no-empty: "off" */
 
 const rawInput = [require('./data/day04')]  //  Giant Squid - bingo game
-const { parseInt } = require('./utils')
+const { parseInt } = require('./runner/utils')
 
 const score = (board, markPads, number) => {
   let sum = 0
