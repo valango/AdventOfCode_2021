@@ -105,7 +105,7 @@ const runAndReport = (puzzle, data, label, print) => {
  * @param {boolean} useBoth
  * @param {boolean} useDemo
  * @param {function(string)} print
- * @param {Array<Object>} [modules]
+ * @param {Array<Object>} [modules]     - for testing only.
  */
 const runPuzzles = (selectedDays, { useBoth, useDemo, print }, modules = undefined) => {
   for (const day of selectedDays) {

@@ -11,17 +11,22 @@ Older ones: [2020](https://github.com/valango/adventOfCode),
 * `day 03:` Actually simple stuff, but it really took some focussing (101min).
 * `day 04:` A nice one. Some time was lost for misreading the input format.
 * `day 05:` Simple, but... man, I hate numbers - I just can't _see_ them!.
-* `day 05:` Now, this was a good lesson - I lost at least 30mins implementing
+* `day 06:` Now, this was a good lesson - I lost at least 30mins implementing
   _an illustration of example_, rather than the actual logic of the process. 🤬
+* `day 07:` This seemingly trivial puzzle left me clueless - totally - I just could not 👁👁 visualize
+  the problem!<br>Only when I finally figured out it is like finding a balance point for a bar with
+  suspended weights⚖️, everything became clear.
 
 ## Track record
+
 My ranking placements and final times for puzzle 1 and 2 by days.<br >
-**Others** is number of solvers of both puzzles and **Just 1** of those who had solved
-only the first one, taken from
+**Others** is number of solvers of both puzzles and **Just 1** of those who had solved only the
+first one, taken from
 [global stats](https://adventofcode.com/2021/stats) when I completed.
 
 | day | Rank 1 | Time 1 | Rank 2 | Time 2 | Others | Just 1|
 | ---: | ---: | :---: | ---: | :---: |---: |---: |
+| 7 | n/a | 01:30:00 | n/a | 02:00:00 |15930|1773|
 | 6 | 8567 |00:30:44 | 7349 | 01:06:45 |7484|4379|
 | 5 | 8539 | 01:18:17 | 7974 | 01:44:41 |8093|1972|
 | 4 | 4087 | 00:41:37 | 4896 | 01:06:05 |6191|1630|
@@ -32,20 +37,24 @@ only the first one, taken from
 ![](quote.png)
 
 ## Usage
-After installing with npm or yarn, just type `./run` or `node .` and the puzzles from the most recent
-day will run.
+
+After installing with npm or yarn, just type `./run` or `node .` and the puzzles from the most
+recent day will run.
 
 The following command line parameters apply:
+
 * integer - day number(s), (default: most recent day only);
 * a: all days;
 * b: both datasets (default: main data only);
 * d: example data only (mutually exclusive with 'b' option;
 * h: print help information and terminate.
 
-If neither 'b' nor 'd' is present, only the main dataset is used.
-If 'd' is present, and demo data is not defined, it falls back to main dataset.
+If neither 'b' nor 'd' is present, only the main dataset is used. If 'd' is present, and demo data
+is not defined, it falls back to main dataset.
 
 ### Code and debugging
+
 **To trap failed assertions** when debugging, set a breakpoint to [index.js](./index.js) line #17.
 
 To start a new day, use contents of [template.js](./template.js).
+
