@@ -13,9 +13,9 @@ Older ones: [2020](https://github.com/valango/adventOfCode),
 * `day 05:` Simple, but... man, I hate numbers - I just can't _see_ them!.
 * `day 06:` Now, this was a good lesson - I lost at least 30mins implementing
   _an illustration of example_, rather than the actual logic of the process. 🤬
-* `day 07:` This seemingly trivial puzzle left me clueless - totally - I just could not 👁👁 visualize
-  the problem!<br>Only when I finally figured out it is like finding a balance point for a bar with
-  suspended weights⚖️, everything became clear.
+* `day 07:` This seemingly trivial puzzle left me clueless - I just could not 👁👁 visualize
+  the problem!<br>Only when I figured out it is like finding a balance point for a bar with
+  suspended weights⚖️, everything became clear, finally.
 
 ## Track record
 

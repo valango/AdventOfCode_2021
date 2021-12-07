@@ -1,36 +1,28 @@
 'use strict'
 const rawInput = [require('./data/day07')]
 const { parseInt } = require('./utils')
+const { abs, round } = Math
 
 const computeCost1 = (pos, points) => {
-  let cost = 0
-
-  for (const x of points) {
-    cost += Math.abs(x - pos)
-  }
-  return cost
+  return points.reduce((cost, x) => cost + abs(x - pos), 0)
 }
 
 const computeCost2 = (pos, points) => {
-  let cost = 0, d, v
+  let cost = 0
 
-  for (const x of points) {
-    v = d = Math.abs(x - pos)
-    while (--d > 0) {
-      v += d
-    }
-    cost += v
+  for (let i = 0, d, v, x; (x = points[i]) !== undefined; i += 1, cost += v) {
+    for (v = d = abs(x - pos); --d > 0; v += d) {}
   }
   return cost
 }
 
-const solve = (data, fn) => {
+const solve = (data, costFn) => {
   let cost, dir = undefined
   let mids = [], bestCost = Number.MAX_SAFE_INTEGER, bestPos
-  let pos = Math.round(data.reduce((acc, v) => acc + v, 0) / data.length)
+  let pos = round(data.reduce((acc, v) => acc + v, 0) / data.length)
 
   do {
-    if ((cost = fn(pos, data)) < bestCost) {
+    if ((cost = costFn(pos, data)) < bestCost) {
       bestCost = cost, bestPos = pos
       if (dir === undefined) {
         dir = -1
@@ -70,6 +62,6 @@ rawInput[1] = `16,1,2,0,4,2,7,1,2,14`
 module.exports = { parse, puzzles: [puzzle1, puzzle2] }
 
 /*
-day07, puzzle #1 	DEMO(            214 µs): 37 	  MAIN(           5603 µs): 345035
-day07, puzzle #2 	DEMO(            111 µs): 168 	MAIN(           4730 µs): 97038163
+day07, puzzle #1 	DEMO(138 µs):  37 	MAIN(3705 µs): 345035
+day07, puzzle #2 	DEMO( 84 µs): 168 	MAIN(3852 µs): 97038163
  */
