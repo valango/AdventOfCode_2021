@@ -3,8 +3,10 @@
 
 const { parseCLI, prepareDays, runPuzzles } = require('../runner')
 const nil = undefined
-const noop = ()=>nil
-const allFalse = { allDays: false, makeMarkdown: false, useBoth: false, useDemo: false }
+const noop = () => nil
+const allFalse = {
+  makeJSON: false, makeMd: false, allDays: false, useBoth: false, useDemo: false
+}
 
 let data, dsns, prints, puzzles
 
@@ -14,9 +16,12 @@ const run = (data, options) => {
 
   dsns = [], prints = [], puzzles = []
 
-  runPuzzles(['01'], { ...options }, noop, nil, {
+  runPuzzles(['01'], { ...options }, noop, {
     '01': {
-      parse: dsn => dsns.push(dsn) && data[dsn],
+      parse: dsn => {
+        dsns.push(dsn)
+        return data[dsn]
+      },
       puzzles: [
         d => puzzles.push('1:' + d) && (d || nil),
         d => puzzles.push('2:' + d) && (d || nil)
@@ -40,7 +45,9 @@ it('should parse CLI', () => {
   expect(parseCLI(['3', '5', 'h']).code).toBe(0)
   expect(parseCLI(['3', '5', 'y']).code).toBe(1)
   expect(parseCLI(['3', '5', 'bd']).code).toBe(1)
-  expect(parseCLI(['m'])).toMatchObject({ makeMarkdown: true })
+  expect(parseCLI(['j'])).toMatchObject({ makeJSON: true })
+  expect(parseCLI(['m'])).toMatchObject({ makeMd: true })
+  expect(parseCLI(['a', 'mj']).code).toBe(1)
 })
 
 it('should prepare days', () => {
@@ -83,3 +90,4 @@ it(`should run [main, demo] d`, () => {
 it(`should run and convert bigint result`, () => {
   expect(run([5n], { useDemo: true })).toEqual({ dsns: [1, 0, 2], puzzles: ['1:5', '2:5'] })
 })
+/* */

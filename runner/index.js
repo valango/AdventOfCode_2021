@@ -12,7 +12,8 @@ const helpText = `Command line parameters:
   b: both datasets (default: main data only)
   d: example data only (mutually exclusive with 'b' option
   h: print this information and terminate
-  m: generate output as markdown table\n\n`
+  j: generate output as JSON-formatted rows
+  m: generate markdown output (default: text table for multiple, JSON for single puzzle)\n\n`
 
 /* istanbul ignore next */
 assert.beforeThrow((assertionError, args) => {
@@ -33,7 +34,7 @@ const parseCLI = (argv) => {
       if (arg.includes('h')) {
         return { code: 0, message: helpText }
       }
-      if (Array.from(arg).some(c => !'abdm'.includes(c))) {
+      if (Array.from(arg).some(c => !'abdjm'.includes(c))) {
         return { code: 1, message: `Illegal parameter '${arg}' - use -h option for help!\n` }
       }
       flags += arg
@@ -41,10 +42,15 @@ const parseCLI = (argv) => {
   }
 
   const useBoth = flags.includes('b'), useDemo = flags.includes('d')
+  const makeJSON = flags.includes('j'), makeMd = flags.includes('m')
 
-  return (useBoth && useDemo)
-    ? { code: 1, message: `Can not use both 'b' and 'd' simultaneously!\n` }
-    : { allDays: flags.includes('a'), days, makeMarkdown: flags.includes('m'), useBoth, useDemo }
+  if (useBoth && useDemo) {
+    return { code: 1, message: `Can not use both 'b' and 'd' simultaneously!\n` }
+  }
+  if (makeJSON && makeMd) {
+    return { code: 1, message: `Can not use both 'm' and 'j' simultaneously!\n` }
+  }
+  return { allDays: flags.includes('a'), days, makeMd, makeJSON, useBoth, useDemo }
 }
 
 /**
@@ -74,18 +80,18 @@ const prepareDays = (requiredDays, modules, allDays) => {
 /**
  * @param {function(*):*} puzzle
  * @param {*} data
- * @returns {{result: number, usecs: number}}
+ * @returns {{result: value, time: number}|undefined}
  */
 const execute = (puzzle, data) => {
   const t0 = process.hrtime()
-  let result = puzzle(data)
-  const usecs = Math.floor(usecsFrom(t0))
+  let value = puzzle(data)
+  const time = Math.floor(usecsFrom(t0))
 
-  if (result !== undefined) {
-    if (typeof result === 'bigint' && result < maxN) {
-      result = Number(result)
+  if (value !== undefined) {
+    if (typeof value === 'bigint' && value < maxN) {
+      value = Number(value)
     }
-    return { result, usecs }
+    return { value, time }
   }
 }
 
@@ -95,7 +101,7 @@ const execute = (puzzle, data) => {
  * @param {*} data
  * @param {string} tag
  * @param {function(string)} say
- * @returns {{usecs:number, result:*}|undefined}
+ * @returns {{usecs:number, value:*}|undefined}
  */
 const runAndReport = (puzzle, data, tag, say) => {
   say(` ${tag}...`)
@@ -111,42 +117,47 @@ const runAndReport = (puzzle, data, tag, say) => {
  * @param {boolean} useDemo
  * @param {function(string)} say
  * @param {Array<Object>} [modules]     - for testing only.
- * @returns {Array<*>}
+ * @returns {Array<Object>}
  */
-const runPuzzles = (days, { useBoth, useDemo }, say, cb = undefined, modules = undefined) => {
+const runPuzzles = (days, { useBoth, useDemo }, say, modules = undefined) => {
   const longLine = '\r'.padEnd(70) + '\r', output = []
 
   for (const day of days) {
     /* istanbul ignore next */
-    const loadable = modules ? modules[day] : require('../day' + day), record = {}
+    const loadable = modules ? modules[day] : require('../day' + day), record = { day }
 
     say(`day${day}:`)
 
-    for (let d, d0, d1, n = 0, tag = 'DEMO'; n <= 1; ++n) {
+    for (let d, d0, d1, n = 0, result; n <= 1; ++n) {
       say(`\tpuzzle #${n + 1} `)
       // print(`day${day}, puzzle #${n + 1} `)
 
       if (useBoth || useDemo) {
         if (n && (d = loadable.parse(2)) !== undefined) {
-          d1 = d, tag = 'DEMO'
+          d1 = d
         }
         if (d1 === undefined) {
           d1 = loadable.parse(1)
 
           if (!d1 && !useBoth && (d1 = loadable.parse(0))) {
-            tag = 'MAIN'    //  Todo: clarify the logic!
+            record.comment = 'main data was used'
           }
         }
-        record[n + tag] = runAndReport(loadable.puzzles[n], d1, tag, say)
+        if ((result = runAndReport(loadable.puzzles[n], d1, 'demo', say))) {
+          (record.demo || (record.demo = {}))[n + 1 + ''] = result
+        }
       }
 
       if (!useDemo) {
         if (d0 === undefined) d0 = loadable.parse(0)
-        record[n + 'MAIN'] = runAndReport(loadable.puzzles[n], d0, 'MAIN', say)
+
+        if ((result = runAndReport(loadable.puzzles[n], d0, 'main', say))) {
+          (record.main || (record.main = {}))[n + 1 + ''] = result
+        }
       }
       say(longLine)
     }
-    output.push(cb ? cb(record, day) : record)
+    output.push(record)
   }
   return output
 }
@@ -161,7 +172,7 @@ exports = module.exports = (argv) => {
     }
   }
 
-  const { allDays, code, days, makeMarkdown, message, useBoth, useDemo } = parseCLI(argv)
+  const { allDays, code, days, makeJSON, makeMd, message, useBoth, useDemo } = parseCLI(argv)
 
   if (message) {
     print(message)
@@ -177,32 +188,15 @@ exports = module.exports = (argv) => {
     return 1
   }
 
-  const { checkRow, demoColumn, dump, dumpMdHeader, getRow } = dumper({ useBoth, useDemo }, print)
+  const dump = dumper({ useBoth, useDemo }, print)
 
-  const callBack = (record, day) => {
-    let res
-    const row = getRow(day)
+  const results = runPuzzles(selectedDays, { useBoth, useDemo }, say)
 
-    if ((res = record['0MAIN'])) row[1] = res.result + '', row[3] = res.usecs + ''
-    if ((res = record['1MAIN'])) row[2] = res.result + '', row[4] = res.usecs + ''
-    if ((res = record['0DEMO'])) row[demoColumn] = res.result + '', row[demoColumn + 2] = res.usecs + ''
-    if ((res = record['1DEMO'])) row[demoColumn + 1] = res.result + '', row[demoColumn + 3] = res.usecs + ''
-
-    if (makeMarkdown) {
-      print('|' + row.join('|') + '|\n')
-    } else {
-      checkRow(row)
-    }
-    return row
+  if (results.length) {
+    dump(results, { makeJSON, makeMd })
+  } else {
+    say('There is no results to be shown!\n')
   }
-
-  if (makeMarkdown) {
-    dumpMdHeader()
-  }
-
-  const lines = runPuzzles(selectedDays, { useBoth, useDemo }, say, callBack)
-
-  if (!makeMarkdown) dump(lines)
 
   return 0
 }

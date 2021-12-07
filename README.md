@@ -65,7 +65,8 @@ The following command line parameters apply:
 * b: both datasets (default: main data only);
 * d: example data only (mutually exclusive with 'b' option;
 * h: print help information and terminate;
-* m: generate markdown output (default: text table).
+* j: generate output as JSON-formatted rows;
+* m: generate markdown output (default: text table for multiple, JSON for single puzzle).
 
 If neither 'b' nor 'd' is present, only the main dataset is used. If 'd' is present, and demo data
 is not defined, it falls back to main dataset.
@@ -77,4 +78,5 @@ a new file named like `day26.js` in project root directory and have fun coding!.
 
 ### Debugging
 
-**To trap failed assertions** when debugging, set a breakpoint to [index.js](./index.js) line #17.
+**To trap failed assertions** when debugging, set a breakpoint to
+[runner/index.js](./runner/index.js) line #20.
