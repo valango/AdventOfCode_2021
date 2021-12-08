@@ -16,6 +16,8 @@ Older ones: [2020](https://github.com/valango/adventOfCode),
 * `day 07:` This seemingly trivial puzzle left me clueless - I just could not 👁👁 visualize
   the problem!<br>Only when I figured out it is like finding a balance point for a bar with
   suspended weights⚖️, everything became clear, finally.
+* `day 08:` Wasted too much time working on description details.
+  Succeeded debugging of code #2 only after using simplified datasets.
 
 ## Track record
 
@@ -26,6 +28,7 @@ first one, taken from
 
 | day | Rank 1 | Time 1 | Rank 2 | Time 2 | Others | Just 1|
 | ---: | ---: | :---: | ---: | :---: |---: |---: |
+| 8 | 9645 | 00:41:25 | 17577 | 07:04:10 |15930|1773|
 | 7 | 16732 | 01:54:24 | 15841 | 02:05:48 |15930|1773|
 | 6 | 8567 |00:30:44 | 7349 | 01:06:45 |7484|4379|
 | 5 | 8539 | 01:18:17 | 7974 | 01:44:41 |8093|1972|
@@ -52,6 +55,7 @@ The following report was generated using command `./run abm`.
 |05|8622|22037|44577|52433|5|12|187|91|
 |06|362346|1639643057051|32755|284|5934|26984457539|3082|417|
 |07|345035|97038163|3185|3950|37|168|133|143|
+|08|344|1048410|151|453466|26|61229|84|36007|
 
 ### Usage
 
