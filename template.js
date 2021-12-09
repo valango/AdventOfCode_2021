@@ -1,4 +1,5 @@
 'use strict'
+
 const { assert, parseInt, readFile } = require('./runner/utils')
 const rawInput = [readFile('data/day0?.txt')]
 

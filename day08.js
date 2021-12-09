@@ -1,4 +1,5 @@
-'use strict'
+'use strict'  //  Segment display puzzles.
+
 const { assert, readFile } = require('./runner/utils')
 const rawInput = [readFile('data/day08.txt')]
 const nil = undefined
@@ -12,13 +13,18 @@ const allSegments = 'abcdefg'
 //                          0      1   2     3     4    5      6    7     8      9
 const segmentsForValues = 'abcefg cf acdeg acdfg bcdf abdfg abdefg acf abcdefg abcdfg'.split(' ')
 
+/** @type {Object<string, number>} */
 const codeMap = segmentsForValues.reduce((m, c, i) => {
   m[c] = i
   return m
 }, {})
 
-//  NB: our strings contain unique values only ant start up lexicographically ordered.
+/**
+ * @param {string[] | string} array
+ * @return {string[]  |null}
+ */
 const permute = (array) => {
+  //  NB: Our strings contain unique chars only and are lexicographically ordered initially.
   array = Array.from(array)
 
   for (let i, k = array.length - 1, v; --k >= 0;) {
@@ -43,6 +49,11 @@ const valueToSegment = (mapping, value) => {
   return i < 0 ? nil : mapping[1][i]
 }
 
+/**
+ * @param {string[][]} mapping
+ * @param {string[] | string} signal
+ * @return {number|undefined}
+ */
 const signalToNumber = (mapping, signal) => {
   let code = [], s
 

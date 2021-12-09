@@ -13,11 +13,12 @@ Older ones: [2020](https://github.com/valango/adventOfCode),
 * `day 05:` Simple, but... man, I hate numbers - I just can't _see_ them!.
 * `day 06:` Now, this was a good lesson - I lost at least 30mins implementing
   _an illustration of example_, rather than the actual logic of the process. 🤬
-* `day 07:` This seemingly trivial puzzle left me clueless - I just could not 👁👁 visualize
-  the problem!<br>Only when I figured out it is like finding a balance point for a bar with
-  suspended weights⚖️, everything became clear, finally.
-* `day 08:` Wasted too much time working on description details.
-  Succeeded debugging of code #2 only after using simplified datasets.
+* `day 07:` This seemingly trivial puzzle left me clueless - I just could not 👁👁 visualize the
+  problem!<br>Only when I figured out it is like finding a balance point for a bar with suspended
+  weights⚖️, everything became clear, finally.
+* `day 08:` Wasted too much time working on description details. Succeeded debugging of code #2 only
+  after using simplified datasets.
+* `day 09:` Made _a lot_ of mistakes. 🤡
 
 ## Track record
 
@@ -28,6 +29,7 @@ first one, taken from
 
 | day | Rank 1 | Time 1 | Rank 2 | Time 2 | Others | Just 1|
 | ---: | ---: | :---: | ---: | :---: |---: |---: |
+| 9 | 9219 | 00:51:40 | 8295 | 01:55:16 |8308|5105|
 | 8 | 9645 | 00:41:25 | 17577 | 07:04:10 |15930|1773|
 | 7 | 16732 | 01:54:24 | 15841 | 02:05:48 |15930|1773|
 | 6 | 8567 |00:30:44 | 7349 | 01:06:45 |7484|4379|
@@ -40,10 +42,12 @@ first one, taken from
 ![](quote.png)
 
 ## Code
-The project codebase consists of daily puzzle files named like `day01.js`, universal runner code
-and module tests for runner code.
+
+The project codebase consists of daily puzzle files named like `day01.js`, universal runner code and
+module tests for runner code.
 
 ### Performance report
+
 The following report was generated using command `./run abm`.
 
 | day|main#1|main#2|µs1|µs2|demo#1|demo#2|µs1|µs2|
@@ -56,11 +60,12 @@ The following report was generated using command `./run abm`.
 |06|362346|1639643057051|32755|284|5934|26984457539|3082|417|
 |07|345035|97038163|3185|3950|37|168|133|143|
 |08|344|1048410|151|453466|26|61229|84|36007|
+|09|417|1148965|8595|15667|15|1134|217|3923|
 
 ### Usage
 
-After installing with npm or yarn, just type `./run` and the puzzles from the most
-recent puzzle file will be executed.
+After installing with npm or yarn, just type `./run` and the puzzles from the most recent puzzle
+file will be executed.
 
 The following command line parameters apply:
 
@@ -77,8 +82,8 @@ is not defined, it falls back to main dataset.
 
 ### Coding
 
-To start with a new puzzle, first copy the contents of [template.js](./template.js) to
-a new file named like `day26.js` in project root directory and have fun coding!.
+To start with a new puzzle, first copy the contents of [template.js](./template.js) to a new file
+named like `day26.js` in project root directory and have fun coding!.
 
 It is recommended to copy the puzzle data into a text file in `data` folder.
 
