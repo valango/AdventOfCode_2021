@@ -1,8 +1,8 @@
 'use strict'  //  Giant Squid - bingo game
 /* eslint no-empty: "off" */
 
-const { parseInt, readFile } = require('./runner/utils')
-const rawInput = [readFile('data/day04.txt')]
+const { loadData, parseInt } = require('./core/utils')
+const rawInput = [loadData(module.filename)]
 
 const score = (board, markPads, number) => {
   let sum = 0

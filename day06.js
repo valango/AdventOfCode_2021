@@ -1,7 +1,7 @@
 'use strict'  //  Lanternfish population
 
-const { parseInt, readFile } = require('./runner/utils')
-const rawInput = [readFile('data/day06.txt')]
+const { loadData, parseInt } = require('./core/utils')
+const rawInput = [loadData(module.filename)]
 
 //  Simple simulation, but slow, and runs out of memory for puzzle2.
 const simulate1 = (initialPopulation, dayCount) => {

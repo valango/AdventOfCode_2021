@@ -1,4 +1,4 @@
-//  /runner/dumper.js
+//  core/dumper.js
 'use strict'
 
 module.exports = ({ useBoth, useDemo }, print) => {

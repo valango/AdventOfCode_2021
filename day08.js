@@ -1,7 +1,8 @@
 'use strict'  //  Segment display puzzles.
 
-const { assert, readFile } = require('./runner/utils')
-const rawInput = [readFile('data/day08.txt')]
+const { assert, loadData } = require('./core/utils')
+const rawInput = [loadData(module.filename)]
+
 const nil = undefined
 const allSegments = 'abcdefg'
 

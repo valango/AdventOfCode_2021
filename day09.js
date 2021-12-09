@@ -1,7 +1,7 @@
 'use strict'  //  Finding local minimums and their basins.
 
-const { parseInt, readFile } = require('./runner/utils')
-const rawInput = [readFile('data/day09.txt')]
+const { loadData, parseInt } = require('./core/utils')
+const rawInput = [loadData(module.filename)]
 
 const shifts = [[0, -1], [0, 1], [-1, 0], [1, 0]]
 

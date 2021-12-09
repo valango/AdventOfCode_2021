@@ -1,4 +1,4 @@
-//  /runner/utils.js
+//  core/utils.js
 'use strict'
 
 const assert = require('assert-fine')

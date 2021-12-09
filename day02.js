@@ -1,7 +1,7 @@
 'use strict'  //  Dive! - vehicle control simulation.
 
-const { assert, parseInt, readFile } = require('./runner/utils')
-const rawInput = [readFile('data/day02.txt')]
+const { assert, loadData, parseInt } = require('./core/utils')
+const rawInput = [loadData(module.filename)]
 
 //  Simple command set.
 const puzzle1 = (commands) => {

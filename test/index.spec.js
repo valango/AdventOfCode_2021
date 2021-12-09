@@ -1,7 +1,7 @@
 'use strict'
 /* eslint-env jest */
 
-const { parseCLI, prepareDays, runPuzzles } = require('../runner')
+const { parseCLI, prepareDays, runPuzzles } = require('../core')
 const nil = undefined
 const noop = () => nil
 const allFalse = {

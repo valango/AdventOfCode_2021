@@ -1,4 +1,4 @@
-//  runner/index.js
+//  core/index.js
 'use strict'
 
 const dumper = require('./dumper')

@@ -1,8 +1,9 @@
 'use strict'
 /* eslint no-empty: "off" */
 
-const { parseInt, readFile } = require('./runner/utils')
-const rawInput = [readFile('data/day07.txt')]
+const { loadData, parseInt } = require('./core/utils')
+const rawInput = [loadData(module.filename)]
+
 const { abs, round } = Math
 
 const computeCost1 = (pos, points) => {
