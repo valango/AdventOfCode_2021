@@ -1,7 +1,7 @@
 'use strict'
 
-const { assert, parseInt, readFile } = require('./runner/utils')
-const rawInput = [readFile('data/day0?.txt')]
+const { assert, parseInt, loadData } = require('./runner/utils')
+const rawInput = [loadData(module.filename)]
 
 const puzzle1 = (data) => {
 }
@@ -18,7 +18,7 @@ const parse = (dsn) => {
   return data   //  NOTE: The runner will distinguish between undefined and falsy!
 }
 
-//  Example data. If rawInput[2] is defined too, then 1 and 2 are for different puzzles.
+//  Example (demo) data.
 rawInput[1] = ``
 //  Uncomment the next line to disable demo for puzzle2 or to define different demo for it.
 //  rawInput[2] = ``

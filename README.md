@@ -82,8 +82,10 @@ is not defined, it falls back to main dataset.
 
 ### Coding
 
-To start with a new puzzle, first copy the contents of [template.js](./template.js) to a new file
-named like `day26.js` in project root directory and have fun coding!.
+To start with a new puzzle for, say, day 14, do:
+1. copy the contents of [template.js](./template.js) to `day26.js`;
+1. create `day24.txt` in `./data` directory and populate it with data from the website;
+1. have fun!
 
 It is recommended to copy the puzzle data into a text file in `data` folder.
 
