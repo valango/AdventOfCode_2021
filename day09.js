@@ -16,7 +16,7 @@ const findLowPoints = (data) => {
     for (let ci = 0, h; ci <= lastC; ci++) {
       let lowestNeighbor = (h = data[ri][ci]) + 1
 
-      for (let i = 0, rc; i < 4; i++) {
+      for (let i = 0; i < 4; i++) {
         let [r, c] = shifts[i]
 
         r += ri, c += ci

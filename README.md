@@ -19,6 +19,7 @@ Older ones: [2020](https://github.com/valango/adventOfCode),
 * `day 08:` Wasted too much time working on description details. Succeeded debugging of code #2 only
   after using simplified datasets.
 * `day 09:` Made _a lot_ of mistakes. 🤡
+* `day 10:` A recipe for immediate failure: _"Oh, I know how to do that!"_.
 
 ## Track record
 
@@ -38,6 +39,7 @@ first one, taken from
 | 7 | 16732 | 01:54:24 | 15841 | 02:05:48 |15930|1773|
 | 8 | 9645 | 00:41:25 | 17577 | 07:04:10 |15930|1773|
 | 9 | 9219 | 00:51:40 | 8295 | 01:55:16 |8308|5105|
+| 10 | 9915 | 01:12:20  | 10966 | 02:00:54 |10982|1716|
 
 ![](quote.png)
 
@@ -61,6 +63,7 @@ The following report was generated using command `./run abm`.
 |07|345035|97038163|3185|3950|37|168|133|143|
 |08|344|1048410|151|453466|26|61229|84|36007|
 |09|417|1148965|8595|15667|15|1134|217|3923|
+|10|341823|2801302861|6336|18650|26397|288957|268|547|
 
 ### Usage
 

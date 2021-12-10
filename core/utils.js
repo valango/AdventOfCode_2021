@@ -17,8 +17,9 @@ const readFile = (path) => {
   }
 }
 
-const loadData = (moduleName) => {
-  const path = resolve('data', basename(moduleName, '.js')) + '.txt'
+//  The `name` should be module.filename or exact name of file in data directory.
+const loadData = (name) => {
+  const path = resolve('data', /\.js$/.test(name) ? basename(name, '.js') + '.txt' : name)
   const data = readFile(path)
 
   if (!data) {
