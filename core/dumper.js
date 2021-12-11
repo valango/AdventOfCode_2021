@@ -2,18 +2,23 @@
 'use strict'
 
 module.exports = ({ useBoth, useDemo }, print) => {
-  let demoColumn = 5, headings, lastColumn, widths, hasNotes = false
+  const showDemo = useBoth || useDemo, showMain = !useDemo, headings = [' day']
+  let lastColumn, widths, hasNotes = false, cc = 1, drc = 1, dtc = 3, mtc = 3
 
   const prepare = (records) => {
-    let headingText = 'main#1 main#2 µs1 µs2'
+    if (showMain) {
+      headings.push('Main1') && headings.push('Main2')
+      cc += 4, drc = 3, dtc = 7
+    }
+    if (showDemo) {
+      headings.push('Demo1') && headings.push('Demo2')
+      cc += 4, mtc = 5
+    }
+    if (showMain) headings.push('M1_µs') && headings.push('M2_µs')
+    if (showDemo) headings.push('D1_µs') && headings.push('D2_µs')
 
-    if (useDemo) {
-      headingText = 'demo#1 demo#2 µs1 µs2', demoColumn = 1
-    } else if (useBoth) headingText += ' demo#1 demo#2 µs1 µs2'
+    if ((hasNotes = records.some(({ comment }) => Boolean(comment)))) headings.push('Notes')
 
-    if ((hasNotes = records.some(({ comment }) => Boolean(comment)))) headingText += ' notes'
-
-    headings = [' day'].concat(headingText.split(' '))
     widths = headings.map(s => s.length), lastColumn = headings.length - 1
   }
 
@@ -76,16 +81,16 @@ module.exports = ({ useBoth, useDemo }, print) => {
         const row = headings.reduce((acc, txt, i) => acc.push(i ? '' : record.day) && acc, [])
         let res, r
 
-        if ((res = record['main'])) {
-          if ((r = res['1'])) row[1] = r.value + '', row[3] = r.time + ''
-          if ((r = res['2'])) row[2] = r.value + '', row[4] = r.time + ''
+        if (showMain && (res = record['main'])) {
+          if ((r = res['1'])) row[1] = r.value + '', row[mtc] = r.time + ''
+          if ((r = res['2'])) row[2] = r.value + '', row[mtc + 1] = r.time + ''
         }
-        if ((res = record['demo'])) {
-          if ((r = res['1'])) row[demoColumn] = r.value + '', row[demoColumn + 2] = r.time + ''
-          if ((r = res['2'])) row[demoColumn + 1] = r.value + '', row[demoColumn + 3] = r.time + ''
+        if (showDemo && (res = record['demo'])) {
+          if ((r = res['1'])) row[drc] = r.value + '', row[dtc] = r.time + ''
+          if ((r = res['2'])) row[drc + 1] = r.value + '', row[dtc + 1] = r.time + ''
         }
         if (record.comment) {
-          row[demoColumn + 4] = record.comment
+          row[cc] = record.comment
         }
         rows.push(row)
       }
