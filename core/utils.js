@@ -22,7 +22,7 @@ const loadData = (name) => {
   const path = resolve('data', /\.js$/.test(name) ? basename(name, '.js') + '.txt' : name)
   const data = readFile(path)
 
-  if (!data) {
+  if (data === undefined) {
     say(`\n***** ENOENT: ${path}\n`)
   }
   return data
