@@ -99,14 +99,14 @@ const execute = (puzzle, data) => {
 /**
  * @param {function(*):*} puzzle
  * @param {*} data
- * @param {string} tag
+ * @param {string} msg
  * @param {function(string)} say
  * @returns {{usecs:number, value:*}|undefined}
  */
-const runAndReport = (puzzle, data, tag, say) => {
-  say(` ${tag}...`)
+const runAndReport = (puzzle, data, msg, say) => {
+  say(` ${msg}...`)
   const res = data && execute(puzzle, data)
-  say(`\b\b\b ok`)
+  say(`\b\b\b: ok`)
 
   return res
 }
@@ -120,17 +120,14 @@ const runAndReport = (puzzle, data, tag, say) => {
  * @returns {Array<Object>}
  */
 const runPuzzles = (days, { useBoth, useDemo }, say, modules = undefined) => {
-  const longLine = '\r'.padEnd(70) + '\r', output = []
+  const longLine = '\r'.padEnd(30) + '\r', output = []
 
   for (const day of days) {
     /* istanbul ignore next */
     const loadable = modules ? modules[day] : require('../day' + day), record = { day }
 
-    say(`day${day}:`)
-
-    for (let d, d0, d1, n = 0, result; n <= 1; ++n) {
-      say(`\tpuzzle #${n + 1} `)
-      // print(`day${day}, puzzle #${n + 1} `)
+    for (let d, d0, d1, n = 0, result, msg; n <= 1; ++n) {
+      msg = (`\rday${day}: puzzle #${n + 1} `)
 
       if (useBoth || useDemo) {
         if (n && (d = loadable.parse(2)) !== undefined) {
@@ -143,19 +140,21 @@ const runPuzzles = (days, { useBoth, useDemo }, say, modules = undefined) => {
             record.comment = 'main data was used'
           }
         }
-        if ((result = runAndReport(loadable.puzzles[n], d1, 'demo', say))) {
+        if ((result = runAndReport(
+          loadable.puzzles[n], d1, msg + (record.comment ? 'MAIN' : 'demo'), say))) {
           (record.demo || (record.demo = {}))[n + 1 + ''] = result
         }
+        say(longLine)
       }
 
       if (!useDemo) {
         if (d0 === undefined) d0 = loadable.parse(0)
 
-        if ((result = runAndReport(loadable.puzzles[n], d0, 'main', say))) {
+        if ((result = runAndReport(loadable.puzzles[n], d0, msg + 'main', say))) {
           (record.main || (record.main = {}))[n + 1 + ''] = result
         }
+        say(longLine)
       }
-      say(longLine)
     }
     output.push(record)
   }
