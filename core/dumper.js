@@ -78,7 +78,7 @@ module.exports = ({ useBoth, useDemo }, print) => {
       prepare(records)
 
       for (const record of records) {
-        const row = headings.reduce((acc, txt, i) => acc.push(i ? '' : record.day) && acc, [])
+        const row = headings.reduce((acc, txt, i) => acc.push(i ? ' ' : record.day) && acc, [])
         let res, r
 
         if (showMain && (res = record['main'])) {
