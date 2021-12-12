@@ -5,14 +5,16 @@ const rawInput = [loadData(module.filename)]
 
 /**
  * @param {string[]} data
+ * @param {boolean} isDemoTask
  */
-const puzzle1 = (data) => {
+const puzzle1 = (data, isDemoTask) => {
 }
 
 /**
  * @param {string[]} data
+ * @param {boolean} isDemoTask
  */
-const puzzle2 = (data) => {
+const puzzle2 = (data, isDemoTask) => {
 }
 
 const parse = (dsn) => {

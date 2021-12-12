@@ -28,6 +28,17 @@ const loadData = (name) => {
   return data
 }
 
+/**
+ * @type {{
+ * parseInt: (function(string): number),
+ * print: (function(string): boolean),
+ * assert: ((function(...[*]=): void) & {beforeThrow: function(*=): ((function(*))|undefined)}),
+ * readFile: (function(string): (string|undefined)),
+ * usecsFrom: (function(number): number),
+ * loadData: (function(string): (string|undefined)),
+ * say: (function(string): boolean)
+ * }}
+ */
 module.exports = {
   assert,
   loadData,

@@ -78,13 +78,14 @@ const prepareDays = (requiredDays, modules, allDays) => {
 }
 
 /**
- * @param {function(*):*} puzzle
+ * @param {function(*, boolean=):*} puzzle
  * @param {*} data
- * @returns {{result: value, time: number}|undefined}
+ * @param {boolean} isDemo
+ * @returns {{result: *, time: number}|undefined}
  */
-const execute = (puzzle, data) => {
+const execute = (puzzle, data, isDemo) => {
   const t0 = process.hrtime()
-  let value = puzzle(data)
+  let value = puzzle(data, isDemo)
   const time = Math.floor(usecsFrom(t0))
 
   if (value !== undefined) {
@@ -93,22 +94,6 @@ const execute = (puzzle, data) => {
     }
     return { value, time }
   }
-}
-
-/* istanbul ignore next */
-/**
- * @param {function(*):*} puzzle
- * @param {*} data
- * @param {string} msg
- * @param {function(string)} say
- * @returns {{usecs:number, value:*}|undefined}
- */
-const runAndReport = (puzzle, data, msg, say) => {
-  say(` ${msg}...`)
-  const res = data && execute(puzzle, data)
-  say(`\b\b\b: ok`)
-
-  return res
 }
 
 /**
@@ -120,14 +105,24 @@ const runAndReport = (puzzle, data, msg, say) => {
  * @returns {Array<Object>}
  */
 const runPuzzles = (days, { useBoth, useDemo }, say, modules = undefined) => {
+  let loadable, record
   const longLine = '\r'.padEnd(30) + '\r', output = []
+
+  /* istanbul ignore next */
+  const runAndReport = (puzzleNumber, data, msg, isDemo) => {
+    say(` ${msg}...`)
+    const res = data && execute(loadable.puzzles[puzzleNumber], data, isDemo)
+    say(`\b\b\b: ok`)
+
+    return res
+  }
 
   for (const day of days) {
     /* istanbul ignore next */
-    const loadable = modules ? modules[day] : require('../day' + day), record = { day }
+    loadable = modules ? modules[day] : require('../day' + day), record = { day }
 
-    for (let d, d0, d1, n = 0, result, msg; n <= 1; ++n) {
-      msg = (`\rday${day}: puzzle #${n + 1} `)
+    for (let d, d0, d1, n = 0, result; n <= 1; ++n) {
+      let msg = (`\rday${day}: puzzle #${n + 1} `)
 
       if (useBoth || useDemo) {
         if (n && (d = loadable.parse(2)) !== undefined) {
@@ -141,7 +136,7 @@ const runPuzzles = (days, { useBoth, useDemo }, say, modules = undefined) => {
           }
         }
         if ((result = runAndReport(
-          loadable.puzzles[n], d1, msg + (record.comment ? 'MAIN' : 'demo'), say))) {
+          n, d1, msg + (record.comment ? 'MAIN' : 'demo'), true))) {
           (record.demo || (record.demo = {}))[n + 1 + ''] = result
         }
         say(longLine)
@@ -150,7 +145,7 @@ const runPuzzles = (days, { useBoth, useDemo }, say, modules = undefined) => {
       if (!useDemo) {
         if (d0 === undefined) d0 = loadable.parse(0)
 
-        if ((result = runAndReport(loadable.puzzles[n], d0, msg + 'main', say))) {
+        if ((result = runAndReport(n, d0, msg + 'main', false))) {
           (record.main || (record.main = {}))[n + 1 + ''] = result
         }
         say(longLine)
@@ -201,4 +196,4 @@ exports = module.exports = (argv) => {
 }
 
 //  Expose internals for module testing.
-Object.assign(exports, { execute, parseCLI, prepareDays, runAndReport, runPuzzles })
+Object.assign(exports, { execute, parseCLI, prepareDays, runPuzzles })
