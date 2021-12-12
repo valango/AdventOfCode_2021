@@ -1,58 +1,30 @@
-'use strict'
+'use strict'  //  Finding different routes in cave system.
 
-const { assert, loadData, parseInt } = require('./core/utils')
+const { loadData } = require('./core/utils')
 const rawInput = [loadData(module.filename)]
 
-const addLink = (counters, a, b) => {
-  const v = counters.get(a) || []
+/**
+ * @param {string[]} data
+ * @return {{smallCaves: string[], links: Map<string, string[]>}}
+ */
+const prepare = (data) => {
+  const links = new Map(), smallCaves = ['']
 
-  v.push(b)
-  counters.set(a, v)
-}
+  const addLink = (links, a, b) => {
+    const v = links.get(a) || []
 
-const makeLinks = (data) => {
-  const counters = new Map()
+    v.push(b)
+    links.set(a, v)
+    if (b !== 'end' && b[0] >= 'a' && !smallCaves.includes(b)) smallCaves.push(b)
+  }
 
   for (const [a, b] of data) {
-    if (a !== 'end' && b !== 'start') addLink(counters, a, b)
-    if (b !== 'end' && a !== 'start') addLink(counters, b, a)
+    if (a !== 'end' && b !== 'start') addLink(links, a, b)
+    if (b !== 'end' && a !== 'start') addLink(links, b, a)
   }
 
-  /* for (let i, isDone = false; !isDone;) {
-    try {
-      counters.forEach((links, key) => {
-        if (links.length === 1 && links[0] !== 'end') {
-          counters.delete(key)
-          counters.forEach((l) => {
-            if ((i = l.indexOf(key)) >= 0) {
-              throw l.splice(i, 1)
-            }
-          })
-        }
-      })
-    } catch (e) {
-      if (e instanceof Error) throw e
-      continue
-    }
-    isDone = true
-  } */
-
-  return counters
+  return { links, smallCaves }
 }
-
-/* const makeCounters = (linksMap) => {
-  const counters = new Map(), keys = []
-
-  for (const key of linksMap.keys()) {
-    if (key[0] >= 'a' && key !== 'start') {
-      counters.set(key, 0)
-      keys.push(key)
-    }
-  }
-  counters.set('end', 0)
-
-  return { counters, keys }
-} */
 
 /**
  * @param {*[]} array
@@ -62,6 +34,7 @@ const makeLinks = (data) => {
 const wouldCycle = (array, value) => {
   for (let i, last = array.length - 1, start = -1;
        (i = array.indexOf(value, start + 1)) >= 0; start = i) {
+
     if (i === last) {
       return true
     }
@@ -72,35 +45,62 @@ const wouldCycle = (array, value) => {
   return false
 }
 
-const puzzle1 = (data) => {
-  const links = makeLinks(data), route = [], routes = []
+/**
+ * @param {Map<string[]>} links
+ * @param {string} [specialCave]  - small cave that may be visited twice.
+ * @return {string[][]}           - routes generated.
+ */
+const computeRoutes = (links, specialCave = undefined) => {
+  const route = [], routes = []
 
-  const walk = (from) => {
+  const walk = (from, special) => {
     const destinations = links.get(from)
 
-    route.push(from)
-    if (from === 'd') {
-      assert(destinations)
-    }
     for (const dst of destinations) {
+      let spec = special
+
       if (dst === 'end') {
         routes.push(route.slice())
         continue
       }
-      if ((dst[0] >= 'a' && route.includes(dst)) || wouldCycle(route, dst)) {
-        continue // route.pop()
+      if (dst[0] >= 'a') {
+        if (route.includes(dst)) {
+          if (dst !== special) {
+            continue
+          }
+          spec = undefined
+        } else if (wouldCycle(route, dst)) {
+          continue
+        }
       }
-      walk(dst) // , visited)
+      route.push(dst)
+      walk(dst, spec)
+      route.pop()
     }
-    route.pop()
   }
 
-  walk('start', new Set())
+  walk('start', specialCave)
 
-  return routes.length
+  return routes
 }
 
+/** @param {string[]} data */
+const puzzle1 = (data) => {
+  return computeRoutes(prepare(data).links).length
+}
+
+/** @param {string[]} data */
 const puzzle2 = (data) => {
+  const passed = new Set()
+
+  for (let { links, smallCaves } = prepare(data), routes; smallCaves.length > 0;) {
+    routes = computeRoutes(links, smallCaves.pop())
+
+    for (const route of routes) {
+      passed.add(route.join(' '))
+    }
+  }
+  return passed.size
 }
 
 const parse = (dsn) => {
@@ -113,7 +113,7 @@ const parse = (dsn) => {
 }
 
 //  Example (demo) data.
-/*
+
 rawInput[1] = `
 start-A
 start-b
@@ -122,8 +122,8 @@ A-b
 b-d
 A-end
 b-end
-`
-*/ /*
+` /* */
+/*
 rawInput[1] = `
 dc-end
 HN-start
@@ -134,8 +134,8 @@ LN-dc
 HN-end
 kj-sa
 kj-HN
-kj-dc
-` */
+kj-dc` /* */
+/*
 rawInput[1] = `
 fs-end
 he-DX
@@ -154,12 +154,11 @@ start-pj
 he-WI
 zg-he
 pj-fs
-start-RW`
-
-//  Uncomment the next line to disable demo for puzzle2 or to define different demo for it.
-//  rawInput[2] = ``
+start-RW` /* */
 
 module.exports = { parse, puzzles: [puzzle1, puzzle2] }
 
 /*
+"demo": { "1": { "value": 10, "time": 343 }, "2": { "value": 36, "time": 293 } },
+"main": { "1": { "value": 4167, "time": 9199 }, "2": { "value": 98441, "time": 237054 } }
  */

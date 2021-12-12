@@ -21,6 +21,7 @@ Older ones: [2020](https://github.com/valango/adventOfCode),
 * `day 09:` Made _a lot_ of mistakes. 🤡
 * `day 10:` A recipe for immediate failure: _"Oh, I know how to do that!"_.
 * `day 11:` Simulations are fun! Some code from day09 was reusable today.
+* `day 12:` Seemingly simple 🤓.
 
 ## Track record
 
@@ -42,6 +43,7 @@ first one, taken from
 | 9 | 9219 | 00:51:40 | 8295 | 01:55:16 |8308|5105|
 | 10 | 9915 | 01:12:20  | 10966 | 02:00:54 |10982|1716|
 | 11 | 6808 | 01:22:26  | 6819 | 01:30:05 |6882|331|
+| 12 | 8918 | 02:55:40  | 8762 | 03:45:21 |8771|1601|
 
 ![](quote.png)
 
@@ -67,6 +69,7 @@ The following report was generated using command `./run abm`.
 |09|417|1148965|15|1134|6902|14368|248|5247|
 |10|341823|2801302861|26397|288957|4142|18103|222|576|
 |11|1719|232|1656|195|1245|629|4499|558|
+|12|4167|98441|10|36|9184|216149|357|277|
 
 ### Usage
 

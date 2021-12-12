@@ -8,7 +8,7 @@ const trigger = 10
 let sideSize
 
 const simulationStep = (field) => {
-  let totalFlashes = 0, flashCount, v
+  let totalFlashes = 0, flashCount
 
   const flash = (x0, y0) => {
     field[y0][x0] = 0

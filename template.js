@@ -3,9 +3,15 @@
 const { assert, loadData, parseInt } = require('./core/utils')
 const rawInput = [loadData(module.filename)]
 
+/**
+ * @param {string[]} data
+ */
 const puzzle1 = (data) => {
 }
 
+/**
+ * @param {string[]} data
+ */
 const puzzle2 = (data) => {
 }
 
