@@ -4,17 +4,19 @@ const { assert, loadData, parseInt } = require('./core/utils')
 const rawInput = [loadData(module.filename)]
 
 /**
- * @param {string[]} data
- * @param {boolean} isDemoTask
+ * @param {*[]} input
+ * @param {TOptions} options
  */
-const puzzle1 = (data, isDemoTask) => {
+const puzzle1 = (input, options) => {
+  return undefined
 }
 
 /**
- * @param {string[]} data
- * @param {boolean} isDemoTask
+ * @param {*[]} input
+ * @param {TOptions} options
  */
-const puzzle2 = (data, isDemoTask) => {
+const puzzle2 = (input, options) => {
+  return undefined
 }
 
 const parse = (dsn) => {

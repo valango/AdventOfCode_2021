@@ -1,6 +1,6 @@
 {
   "name": "advent-of-code-21",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "description": "My AdventOfCode.com 2021 personal progress",
   "main": "run",
   "homepage": "https://github.com/valango/AdventOfCode_2021",
@@ -9,7 +9,7 @@
   "license": "MIT",
   "keywords": [],
   "scripts": {
-    "lint": "eslint ./*.js",
+    "lint": "eslint ./*.js ./core/*.js",
     "purge": "rimraf node_modules reports",
     "test": "jest --config test/jest.config.js"
   },

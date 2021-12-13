@@ -78,14 +78,14 @@ const prepareDays = (requiredDays, modules, allDays) => {
 }
 
 /**
- * @param {function(*, boolean=):*} puzzle
+ * @param {function(*, object=):*} puzzle
  * @param {*} data
- * @param {boolean} isDemo
+ * @param {Object} options
  * @returns {{result: *, time: number}|undefined}
  */
-const execute = (puzzle, data, isDemo) => {
+const execute = (puzzle, data, options) => {
   const t0 = process.hrtime()
-  let value = puzzle(data, isDemo)
+  let value = puzzle(data, options)
   const time = Math.floor(usecsFrom(t0))
 
   if (value !== undefined) {
@@ -98,20 +98,20 @@ const execute = (puzzle, data, isDemo) => {
 
 /**
  * @param {Array<string>} days
- * @param {boolean} useBoth
- * @param {boolean} useDemo
+ * @param {Object} options
  * @param {function(string)} say
  * @param {Array<Object>} [modules]     - for testing only.
  * @returns {Array<Object>}
  */
-const runPuzzles = (days, { useBoth, useDemo }, say, modules = undefined) => {
+const runPuzzles = (days, options, say, modules = undefined) => {
   let loadable, record
   const longLine = '\r'.padEnd(30) + '\r', output = []
+  const { useBoth, useDemo } = options, opts = { ...options, days: undefined }
 
   /* istanbul ignore next */
   const runAndReport = (puzzleNumber, data, msg, isDemo) => {
     say(` ${msg}...`)
-    const res = data && execute(loadable.puzzles[puzzleNumber], data, isDemo)
+    const res = data && execute(loadable.puzzles[puzzleNumber], data, { ...opts, isDemo })
     say(`\b\b\b: ok`)
 
     return res
@@ -166,28 +166,28 @@ exports = module.exports = (argv) => {
     }
   }
 
-  const { allDays, code, days, makeJSON, makeMd, message, useBoth, useDemo } = parseCLI(argv)
+  const options = parseCLI(argv)
 
-  if (message) {
-    print(message)
-    return code
+  if (options.message) {
+    print(options.message)
+    return options.code
   }
 
   assert(modules.length, 'No dayNN.js modules found!')
 
-  const selectedDays = prepareDays(days, modules, allDays)
+  const selectedDays = prepareDays(options.days, modules, options.allDays)
 
   if (typeof selectedDays === 'string') {
-    print(message)
+    print(options.message)
     return 1
   }
 
-  const dump = dumper({ useBoth, useDemo }, print)
+  const dump = dumper(options, print)
 
-  const results = runPuzzles(selectedDays, { useBoth, useDemo }, say)
+  const results = runPuzzles(selectedDays, options, say)
 
   if (results.length) {
-    dump(results, { makeJSON, makeMd })
+    dump(results, options)
   } else {
     say('There is no results to be shown!\n')
   }

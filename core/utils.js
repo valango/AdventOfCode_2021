@@ -51,3 +51,17 @@ module.exports = {
     return (t1[0] * 1e9 + t1[1]) / 1000
   }
 }
+
+/**
+ * Type for the puzzle function <options> argument.
+ *
+ * @typedef {{
+ *   allDays: boolean,
+ *   makeJSON: boolean,
+ *   makeMd: boolean,
+ *   [isDemo]: boolean,
+ *   useBoth: boolean,
+ *   useDemo: boolean
+ * }} TOptions
+ */
+
