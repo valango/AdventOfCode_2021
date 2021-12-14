@@ -1,66 +1,83 @@
-'use strict'
+'use strict'  //  Iterative string replacement.
+//  For puzzle #2, a simple simulation results in memory explosion,
+//  so instead of actual replacements, we just compute resulting character counts.
 
 const { loadData } = require('./core/utils')
 const rawInput = [loadData(module.filename)]
+const { max, min } = Math
 
-/** @typedef {{rules: string[][], template: string}} TInput */
+/** @typedef {{insertable:string, match:string, links:number[]}} TRule */
+/** @typedef {{rules: TRule[], template: string}} TInput */
 
-/***
- * @param {string[][]} rules
- * @param {string} template
- * @return {string}
+/**
+ * @param {TRule[]} rules
+ * @param {string} string
+ * @param {number} iterationsCount
  */
-const insert = (rules, template) => {
+const solve = (rules, string, iterationsCount) => {
+  const charCounts = new Map(), { length } = rules
+  let minCount = Number.MAX_VALUE, maxCount = 0
+  let firingCountsOfRules = new Array(length).fill(0)
 
-  for (const rule of rules) {
-    for (let i, i0 = 0; (i = template.indexOf(rule[0], i0) + 1) > 0; i0 = i) {
-      template = template.slice(0, i) + rule[1] + template.slice(i)
+  const increaseCountOf = (ch, by) => charCounts.set(ch, (charCounts.get(ch) || 0) + by)
+
+  for (let ir = 0; ir < length; ++ir) {
+    for (let i, j = 0, { match } = rules[ir]; (i = string.indexOf(match, j) + 1); j = i) {
+      firingCountsOfRules[ir] += 1
     }
   }
-  return template.toUpperCase()
-}
 
-const evaluate = string => {
-  const counts = new Map()
-  let min = Number.MAX_SAFE_INTEGER, max = -1, cMax, cMin
+  Array.from(string).forEach(ch => increaseCountOf(ch, 1))
 
-  for (let c, i = 0; (c = string[i]); i += 1) {
-    counts.set(c, (counts.get(c) || 0) + 1)
+  for (let n = 1, next; n <= iterationsCount; ++n, firingCountsOfRules = next) {
+    next = new Array(length).fill(0)
+
+    for (let ir = 0, n; ir < length; ++ir) {
+      if ((n = firingCountsOfRules[ir]) > 0) {
+        const { insertable, links } = rules[ir]
+        increaseCountOf(insertable, n)
+
+        for (const link of links) {
+          next[link] += n
+        }
+      }
+    }
   }
-  counts.forEach((v) => {
-    min = Math.min(min, v)
-    max = Math.max(max, v)
-  })
-  return max - min
+
+  charCounts.forEach(n => (maxCount = max(n, maxCount)) && (minCount = min(n, minCount)))
+
+  return maxCount - minCount
 }
 
 /**
- * @param {TInput[]} input
- * @param {number} count
+ * @param {TRule[]} rules
+ * @param {string} template
  */
-const solve = (input, count) => {
-  let { rules, template } = input
+const puzzle1 = ({ rules, template }) => {
+  return solve(rules, template, 10)
+}
 
-  for (let i = 0; i < count; ++i) {
-    template = insert(rules, template)
+/**
+ * @param {TRule[]} rules
+ * @param {string} template
+ */
+const puzzle2 = ({ rules, template }) => {
+  return solve(rules, template, 40)
+}
+
+/**
+ * @param {TRule[]} rules
+ * @return {TRule[]}
+ */
+const fillLinks = rules => {
+  for (const rule of rules) {
+    let string
+    const { insertable, links, match } = rule, [a, b] = match
+
+    string = a + insertable, links[0] = rules.findIndex(({ match }) => match === string)
+    string = insertable + b, links[1] = rules.findIndex(({ match }) => match === string)
   }
-  return evaluate(template)
-}
-
-/**
- * @param {*[]} input
- * @param {TOptions} options
- */
-const puzzle1 = (input, options) => {
-  return solve(input, 10)
-}
-
-/**
- * @param {*[]} input
- * @param {TOptions} options
- */
-const puzzle2 = (input, options) => {
-  // return solve(input, 40)
+  return rules
 }
 
 const parse = (dsn) => {
@@ -69,10 +86,10 @@ const parse = (dsn) => {
   if (data && (data = data.split('\n').filter(v => Boolean(v))).length) {
     const template = data.shift()
     return {
-      rules: data.map(line => {
-        const [a, b] = line.split(' -> ')
-        return [a, b.toLowerCase()]
-      }), template
+      rules: fillLinks(data.map(line => {
+        const [match, insertable] = line.split(' -> ')
+        return { insertable, match, links: [-1, -1] }
+      })), template
     }
   }
   return data   //  NOTE: The runner will distinguish between undefined and falsy!
@@ -106,4 +123,6 @@ CN -> C
 module.exports = { parse, puzzles: [puzzle1, puzzle2] }
 
 /*
+"demo": { "1": { "value": 1588, "time": 348 }, "2": { "value": 2188189693529, "time": 301 } },
+"main": { "1": { "value": 2988, "time": 287 }, "2": { "value": 3572761917024, "time": 2576 } }
  */
