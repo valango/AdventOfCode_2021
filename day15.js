@@ -3,81 +3,73 @@
 const { assert, loadData, parseInt } = require('./core/utils')
 const rawInput = [loadData(module.filename)]
 
-const dirs = [[0, -1], [0, 1], [-1, 0], [1, 0]], nDirs = dirs.length
+const dirs = [[0, -1], [-1, 0], [0, 1], [1, 0]], nDirs = dirs.length
 
 /** @param {number[][]} risksOfXY */
 const solve = (risksOfXY) => {
-  const height = risksOfXY.length, width = height && risksOfXY[0].length
-  let route = [], bestRoute = [], bestScore = Number.MAX_VALUE
   const cumulativeRisks = []
+  const height = risksOfXY.length, width = height && risksOfXY[0].length
+  let wasChanged
 
   for (let y = 0; y < height; ++y) {
     cumulativeRisks.push(new Array(width).fill(Number.MAX_SAFE_INTEGER))
   }
 
-  const notWalkedYetTo = (x1, y1) => {
-    const next = bestRoute[route.length]
-
-    return !(next && next[0] === x1 && next[1] === y1)
-  }
-
-  /**
-   * @param {number} x0
-   * @param {number} y0
-   * @param {number} riskSoFar
-   */
-  const walkFrom = (x0, y0, riskSoFar) => {
-    let leastRisk = 10 + riskSoFar, bestX, bestY
-
-    /* if (riskSoFar > cumulativeRisks[y0][x0]) {
-      return Number.MAX_VALUE
-    } */
-    cumulativeRisks[y0][x0] = riskSoFar
-    // route.push([x0, y0, riskSoFar])
-    //  Try all possible directions, best first.
-    for (let i = 0, risk; i < nDirs; ++i) {
-      let [x, y] = dirs[i]
-
-      x += x0, y += y0
-      if (x >= 0 && y >= 0 && x < width && y < height) {
-        if ((risk = risksOfXY[y][x] + riskSoFar) < leastRisk) {
-          if (cumulativeRisks[y][x] > risk) {
-            leastRisk = risk, bestX = x, bestY = y
-          }
+  const findBestPreviousScoreFor = (x0, y0) => {
+    let lesser = Number.MAX_SAFE_INTEGER // cumulativeRisks[y0][x0], x1, y1
+    for (let i = 0, x, y, value; i < nDirs && ([x, y] = dirs[i]); ++i) {
+      if ((x += x0) >= 0 && (y += y0) >= 0 && x < width && y < height) {
+        if ((value = cumulativeRisks[y][x]) < lesser) {
+          lesser = value
         }
       }
     }
-    if (leastRisk < (10 + riskSoFar)) {
-      riskSoFar = walkFrom(bestX, bestY, leastRisk)
-      return riskSoFar
-    }
-    // assert(route.pop())
-
-    return riskSoFar
+    return lesser
   }
 
-  for (let score; (score = walkFrom(0, 0, 0)) < Number.MAX_VALUE; route = []) {
-    if (score < bestScore) {
-      bestScore = score
+  const borderCoordsFor = (x1, y1) => {
+    const coords = []
+
+    for (let i = 0; i < x1; ++i) coords.push([i, y1])
+    for (let i = 0; i < y1; ++i) coords.push([x1, i])
+    coords.push([x1, y1])
+    return coords
+  }
+
+  const expandRisksMapTo = (x1, y1) => {
+    let coords = borderCoordsFor(x1, y1), v
+    for (const [x, y] of coords) {
+      v = findBestPreviousScoreFor(x, y) + risksOfXY[y][x]
+      if (cumulativeRisks[y][x] > v) {
+        cumulativeRisks[y][x] = v
+        wasChanged = true
+      }
     }
   }
 
-  return bestScore
+  cumulativeRisks[0][0] = 0
+
+  do {
+    wasChanged = false
+    for (let i = 1; i < height; ++i) {
+      expandRisksMapTo(i, i)
+    }
+  } while (wasChanged)
+
+  return cumulativeRisks[height - 1][width - 1]
 }
 
 /**
  * @param {*[]} input
- * @param {TOptions} options
  */
-const puzzle1 = (input, options) => {
+const puzzle1 = (input) => {
   return solve(input)
 }
 
 /**
  * @param {*[]} input
- * @param {TOptions} options
  */
-const puzzle2 = (input, options) => {
+const puzzle2 = (input) => {
   return undefined
 }
 
