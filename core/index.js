@@ -125,7 +125,7 @@ const runPuzzles = (days, options, say, modules = undefined) => {
       let msg = (`\rday${day}: puzzle #${n + 1} `)
 
       if (useBoth || useDemo) {
-        if (n && (d = loadable.parse(2)) !== undefined) {
+        if (n && (d = loadable.parse(2))) {
           d1 = d
         }
         if (d1 === undefined) {

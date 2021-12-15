@@ -1,7 +1,16 @@
 'use strict'
 
 const { assert, loadData, parseInt } = require('./core/utils')
-const rawInput = [loadData(module.filename)]
+const rawInput = [loadData(module.filename), 0, 0, 0]
+
+const parse = (dsn) => {
+  let data = rawInput[dsn]
+
+  if (data && (data = data.split('\n').filter(v => Boolean(v))).length) {
+    return data
+  }
+  return data   //  NOTE: The runner will distinguish between undefined and falsy!
+}
 
 /**
  * @param {*[]} input
@@ -17,15 +26,6 @@ const puzzle1 = (input, options) => {
  */
 const puzzle2 = (input, options) => {
   return undefined
-}
-
-const parse = (dsn) => {
-  let data = rawInput[dsn]
-
-  if (data && (data = data.split('\n').filter(v => Boolean(v))).length) {
-    return data
-  }
-  return data   //  NOTE: The runner will distinguish between undefined and falsy!
 }
 
 //  Example (demo) data.

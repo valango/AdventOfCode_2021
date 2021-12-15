@@ -1,7 +1,19 @@
 'use strict'
 
 const { assert, loadData, parseInt } = require('./core/utils')
-const rawInput = [loadData(module.filename)]
+const rawInput = [loadData(module.filename), 0, 0, 0]
+
+rawInput[3] = loadData('day15d.txt')
+
+/** @param {number} dsn */
+const parse = (dsn) => {
+  let data = rawInput[dsn]
+
+  if (data && (data = data.split('\n').filter(v => Boolean(v))).length) {
+    return data.map(row => Array.from(row).map(parseInt))
+  }
+  return data
+}
 
 const dirs = [[0, -1], [-1, 0], [0, 1], [1, 0]], nDirs = dirs.length
 
@@ -16,7 +28,7 @@ const solve = (risksOfXY) => {
   }
 
   const findBestPreviousScoreFor = (x0, y0) => {
-    let lesser = Number.MAX_SAFE_INTEGER // cumulativeRisks[y0][x0], x1, y1
+    let lesser = Number.MAX_SAFE_INTEGER
     for (let i = 0, x, y, value; i < nDirs && ([x, y] = dirs[i]); ++i) {
       if ((x += x0) >= 0 && (y += y0) >= 0 && x < width && y < height) {
         if ((value = cumulativeRisks[y][x]) < lesser) {
@@ -62,24 +74,37 @@ const solve = (risksOfXY) => {
 /**
  * @param {*[]} input
  */
-const puzzle1 = (input) => {
-  return solve(input)
-}
+const puzzle1 = (input) => solve(input)
 
 /**
  * @param {*[]} input
+ * @param {TOptions} options
  */
-const puzzle2 = (input) => {
-  return undefined
-}
+const puzzle2 = (input, options) => {
+  const data = [], testData = options.isDemo && parse(3)
+  const height = input.length, width = height && input[0].length
 
-const parse = (dsn) => {
-  let data = rawInput[dsn]
+  for (let y = 0; y < 5 * height; ++y) {
+    const row = new Array(5 * width)
 
-  if (data && (data = data.split('\n').filter(v => Boolean(v))).length) {
-    return data.map(row => Array.from(row).map(parseInt))
+    for (let r, src, x = 0; x < 5 * width; ++x) {
+      if (y < height) {
+        if (x < width) {
+          row[x] = input[y][x]
+        } else {
+          row[x] = (r = row[x - width] + 1) > 9 ? r = r - 9 : r
+        }
+      } else {
+        src = data[y - height]
+        row[x] = (r = src[x] + 1) > 9 ? r = r - 9 : r
+      }
+    }
+    if (testData) {
+      for (let i = 0; i < width; ++i) assert(row[i] === testData[y][i], 'bad data')
+    }
+    data.push(row)
   }
-  return data   //  NOTE: The runner will distinguish between undefined and falsy!
+  return solve(data)
 }
 
 //  Example (demo) data.
@@ -94,8 +119,6 @@ rawInput[1] = `
 3125421639
 1293138521
 2311944581`
-//  Uncomment the next line to disable demo for puzzle2 or to define different demo for it.
-//  rawInput[2] = ``
 
 module.exports = { parse, puzzles: [puzzle1, puzzle2] }
 

@@ -26,6 +26,9 @@ Older ones: [2020](https://github.com/valango/adventOfCode),
 * `day 14:` Damn, I was barely able to steal some time for AOC today! The puzzle was fun,
 simple simulation resulted in 💥 explosion on part 2 and the correct solution was of less code
   than the initial part 1 😎!
+* `day 15:` This was a clever one - at first, I fell into trap of best-route-search 💀;
+  the working solutions was to just flood the whole field with cumulative risk values.
+  I bet the algorithm can be improved.
 
 ## Track record
 
@@ -50,6 +53,7 @@ first one, taken from
 | 12 | 8918 | 02:55:40  | 8762 | 03:45:21 |8771|1601|
 | 13 | 8031 | 01:28:30  | 4321 | 01:35:31 |7324|1034|
 | 14 | 11437 | 02:07:05  | 16267 | 08:17:38 |18245|9021|
+| 15 | 11538 | 04:58:08  | 9372 | 06:00:22 |9388|3618|
 
 ![](quote.png)
 
@@ -78,6 +82,7 @@ The following report was generated using command `./run abm`.
 |12|4167|98441|10|36|9184|216149|357|277|
 |13|827|EAHKRECP|17|O|2800|7831|455|1658|
 |14|2988|3572761917024|1588|2188189693529|306|2730|374|328|
+|15|613|2899|40|315|30914|1553300|1044|10114|
 
 ### Usage
 
