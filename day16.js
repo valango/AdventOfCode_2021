@@ -1,92 +1,88 @@
-'use strict'
+'use strict'  //  Bit string interpreter.
 
-const { assert, loadData, parseInt } = require('./core/utils')
-const rawInput = [loadData(module.filename), 0, 0, 0]
+const { assert, loadData } = require('./core/utils')
+const rawInput = [loadData(module.filename), 0]
 
 /** @typedef {string} TInput */
-/** @typedef {{next:number, value:number, versionSum:number}} TParsed */
+/** @typedef {{next:number, value:BigInt, versionSum:number}} TParsed */
 
+/** @type {Object<string, string>} */
 const hexBits = {}
 
 for (let i = 0; i < 16; ++i) {
   hexBits[i.toString(16)] = i.toString(2).padStart(4, '0')
 }
 
-/** @return {string} */
+/** @return {string[]} */
 const parse = (dsn) => {
   let data = rawInput[dsn]
 
   if (data && (data = data.split('\n').filter(v => Boolean(v))).length) {
-    return data[0]
+    return data
   }
-  return data   //  NOTE: The runner will distinguish between undefined and falsy!
+  return data   //  The runner will distinguish between undefined and falsy!
 }
 
 /** @return {TParsed} */
-let parsePacket = (bits, start, length) => start
-
-/** @return {TParsed} */
-const parseLiteral = (bits, start, length) => {
-  let dbg = bits.slice(start), n = 0
-  let value = 0, next
+const parseLiteral = (bits, start) => {
+  let value = 0n, next
 
   for (let a = start, first; first !== '0'; first = bits[a++], a = next) {
-    dbg = bits.slice(a)
-    ++n
-    assert(a < length)
-    value = (value << 4) + Number.parseInt(bits.slice(a + 1, next = a + 5), 2)
+    value = (value * 16n) + BigInt('0b' + bits.slice(a + 1, next = a + 5))
   }
-  dbg = bits.slice(start) // DEBUG
-  // next += (next - start) % 5
 
   return { next, value, versionSum: 0 }
 }
 
-/** @return {TParsed} */
-const parseOther = (bits, start, length) => {
-  let dbg = bits.slice(start)
-  let lengthTypeID = bits[start++], next, value = 0, v, res, versionSum = 0
-  if (start >= length) {
-    start = length
-  }
-
-  if (lengthTypeID === '0') {
-    //  lengthOfSubPackets
-    v = Number.parseInt(bits.slice(start, next = start + 15), 2)
-
-    for (v += next; ;) {
-      dbg = bits.slice(next)
-      res = parsePacket(bits, next, length)
-      versionSum += res.versionSum
-      value += res.value
-      if ((next = res.next) >= v) {
-        break
-      }
-    }
-  } else {
-    // numberOfSubPackets
-    v = Number.parseInt(bits.slice(start, next = start + 11), 2)
-    for (; v > 0; --v, next = res.next) {
-      res = parsePacket(bits, next, length)
-      value += res.value
-      versionSum += res.versionSum
-    }
-  }
-  return { next, value, versionSum }
+/**
+ * @param {BigInt[]} values
+ * @param {number} typeId
+ * @return {BigInt}
+ */
+const computeResult = (values, typeId) => {
+  if (typeId === 0) return values.reduce((res, v) => res + v, 0n)
+  if (typeId === 1) return values.reduce((res, v) => res * v, 1n)
+  if (typeId === 2) return values.reduce((res, v) => (res === '' || v < res) ? v : res, '')
+  if (typeId === 3) return values.reduce((res, v) => (res === '' || v > res) ? v : res, '')
+  if (typeId === 5) return assert(values.length === 2) || (values[0] > values[1] ? 1n : 0n)
+  if (typeId === 6) return assert(values.length === 2) || (values[0] < values[1] ? 1n : 0n)
+  if (typeId === 7) return assert(values.length === 2) || (values[0] === values[1] ? 1n : 0n)
+  assert(false, 'bad typeId')
 }
 
-parsePacket = (bits, start, length) => {
-  let dbg = bits.slice(start)
-  let a = start, b, res
-  const version = Number.parseInt(bits.slice(a, b = a + 3), 2)
-  const typeId = Number.parseInt(bits.slice(b, a = b + 3), 2)
+/** @return {TParsed} */
+const parseOther = (bits, start, typeId) => {
+  let lengthTypeID = bits[start++], next, v, res, versionSum = 0, values = []
 
-  dbg = bits.slice(a)
-  if (typeId === 4) {
-    res = parseLiteral(bits, a, length)
+  if (lengthTypeID === '0') {         //  Parse sub-packets zone length.
+    v = Number.parseInt(bits.slice(start, next = start + 15), 2) + next
+
+    do {
+      values.push((res = parsePacket(bits, next)).value)
+      versionSum += res.versionSum
+    } while ((next = res.next) < v)
+
+  } else if (lengthTypeID === '1') {  //  Parse sub-packets count.
+    v = Number.parseInt(bits.slice(start, next = start + 11), 2)
+
+    for (; v > 0; --v, next = res.next) {
+      values.push((res = parsePacket(bits, next)).value)
+      versionSum += res.versionSum
+    }
   } else {
-    res = parseOther(bits, a, length)
+    assert(false, 'bad lengthTypeID', lengthTypeID)
   }
+
+  return { next, value: computeResult(values, typeId), versionSum }
+}
+
+/** @return {TParsed} */
+function parsePacket (bits, start) {
+  let tmp
+  const version = Number.parseInt(bits.slice(start, tmp = start + 3), 2)
+  const typeId = Number.parseInt(bits.slice(tmp, start = tmp + 3), 2)
+  const res = typeId === 4 ? parseLiteral(bits, start) : parseOther(bits, start, typeId)
+
   return { ...res, versionSum: version + res.versionSum }
 }
 
@@ -94,43 +90,52 @@ parsePacket = (bits, start, length) => {
  * @param {string} input
  * @return {TParsed}
  */
-const decode = input => {
-  const bits = Array.from(input.toLowerCase()).map(c => hexBits[c]).join(''), { length } = bits
-  const res = parsePacket(bits, 0, length)
-  // assert(res.next === length)
-  return res
+const decode = input =>
+  parsePacket(Array.from(input.toLowerCase()).map(c => hexBits[c]).join(''), 0)
+
+const runDemo = (input, key, skip, length) => {
+  return input.slice(skip, skip + length).map(line => decode(line)[key]).join(',')
 }
 
 /**
  * @param {string} input
- * @param {TOptions} options
+ * @param {boolean} isDemo
  */
-const puzzle1 = (input, options) => {
-  const { value, versionSum } = decode(input)
-  return versionSum + ', ' + value
+const puzzle1 = (input, { isDemo }) => {
+  return isDemo ? runDemo(input, 'versionSum', 0, 7) : decode(input[0]).versionSum
 }
 
 /**
  * @param {string} input
- * @param {TOptions} options
+ * @param {boolean} isDemo
  */
-const puzzle2 = (input, options) => {
-  // return decode(input)
+const puzzle2 = (input, { isDemo }) => {
+  return isDemo ? runDemo(input, 'value', 7, 8) : decode(input[0]).value
 }
 
 //  Example (demo) data.
-rawInput[1] = `D2FE28`                          //  6, 2021
-rawInput[1] = `38006F45291200`                  //  9, 30
-rawInput[1] = `EE00D40C823060`
-rawInput[1] = `8A004A801A8002F478`
-rawInput[1] = `620080001611562C8802118E34`
-rawInput[1] = `C0015000016115A2E0802F182340`
-rawInput[1] = `A0016C880162017C3686B18A3D4780`
-/* */
-//  Uncomment the next line to disable demo for puzzle2 or to define different demo for it.
-//  rawInput[2] = ``
+rawInput[1] = `
+D2FE28
+38006F45291200
+EE00D40C823060
+8A004A801A8002F478
+620080001611562C8802118E34
+C0015000016115A2E0802F182340
+A0016C880162017C3686B18A3D4780
+
+C200B40A82
+04005AC33890
+880086C3E88112
+CE00C43D881120
+D8005AC2A8F0
+F600BC2D8F
+9C005AC2F8F0
+9C0141080250320F1802104A08`
 
 module.exports = { parse, puzzles: [puzzle1, puzzle2] }
 
 /*
+"demo": { "1": { "value": "6 9 14 16 12 23 31", "time": 747 },
+          "2": { "value": "3 54 7 9 1 0 0 1", "time": 129 } },
+"main": { "1": { "value": 923, "time": 752 }, "2": { "value": 258888628940, "time": 1279 } } }
  */
