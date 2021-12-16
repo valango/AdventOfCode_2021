@@ -1,4 +1,4 @@
-'use strict'
+'use strict'  //  Finding the least risky path thru labyrinth.
 
 const { assert, loadData, parseInt } = require('./core/utils')
 const rawInput = [loadData(module.filename), 0, 0, 0]
