@@ -1,6 +1,8 @@
 //  core/dumper.js
 'use strict'
 
+const { assert } = require('./utils')
+
 module.exports = ({ useBoth, useDemo }, print) => {
   const showDemo = useBoth || useDemo, showMain = !useDemo, headings = [' day']
   let lastColumn, widths, hasNotes = false, cc = 1, drc = 1, dtc = 3, mtc = 3
@@ -27,7 +29,11 @@ module.exports = ({ useBoth, useDemo }, print) => {
   }
 
   const toJSON = (record) => {
-    record = JSON.stringify(record)
+    try {
+      record = JSON.stringify(record)
+    } catch (err) {
+      assert(err === null, 'dumper.toJSON')
+    }
     record = record.replaceAll('{', '{ ')
     record = record.replaceAll('}', ' }')
     record = record.replaceAll(',"', ', "')
