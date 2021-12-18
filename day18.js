@@ -30,9 +30,9 @@ const parseLine = (line) => {
   for (let r; (r = /\[([^[\]]+)]/.exec(line));) {
     const pair = r[1].split(',')
 
-    for (let i = 0, j; i < 2; ++i) {
+    for (let i = 0; i < 2; ++i) {
       if (pair[i][0] === '@') {
-        pair[i] = stack[j = parseInt(pair[i].slice(1))]
+        pair[i] = stack[parseInt(pair[i].slice(1))]
       } else {
         pair[i] = parseInt(pair[i])
       }
@@ -51,20 +51,20 @@ const parse = (dsn) => {
   if (data && (data = data.split('\n').filter(v => Boolean(v))).length) {
     return data.map(parseLine)
   }
-  return data   //  NOTE: The runner will distinguish between undefined and falsy!
+  return data
 }
 
 /**
  * @param {TNode} node
+ * @param {number} depth
  * @return {string}
  */
-const stringify = (node, n = 0) => {
+const stringify = (node, depth = 0) => {
   if (!node) return ''
   const parts = node.children.map(
-    child => typeof child === 'object' ? stringify(child, n + 1) : child)
-  const ends = n >= 4 ? '<>' : '[]'
+    child => typeof child === 'object' ? stringify(child, depth + 1) : child)
+  const ends = depth >= 4 ? '<>' : '[]'
   return ends[0] + parts.join(', ') + ends[1]
-  // return ends[0] + ' ' + parts.join(', ') + ' ' + ends[1]
 }
 
 /**
@@ -75,7 +75,7 @@ const stringify = (node, n = 0) => {
  */
 const siblingWithNumberAt = (node, index, previous) => {
   if (node) {
-    let next = node.children[index] // , s0 = stringify(node), s1 = stringify(previous)
+    let next = node.children[index]
 
     if (typeof next === 'object') {
       if (node.parent === previous) {
@@ -97,11 +97,9 @@ const siblingWithNumberAt = (node, index, previous) => {
  */
 const explode = (node) => {
   const { parent } = node, { children } = parent, values = node.children, { length } = values
-  // let s0 = stringify(parent), s1
 
   for (let affected, i = 0, j; i < length; ++i) {
     if ((affected = siblingWithNumberAt(parent, i, node)) !== nil) {
-      // s1 = s0 && stringify(affected)
       if (typeof affected.children[(j = i) ^ 1] !== 'object') {
         j = i ^ 1
       }
@@ -139,19 +137,18 @@ const splitIfNeeded = (node, i) => {
  */
 const reduce = (object, mode) => {
   const dive = (node, depth) => {
-    let wentDown = 0, r, result = undefined, s = '!' // stringify(node)
+    let wentDown = 0, r, result = undefined
 
     for (let i = 0; i < node.children.length; ++i) {
       if (typeof node.children[i] !== 'object') {
         if (mode !== 'explode' && splitIfNeeded(node, i)) {
           if (depth >= 3) {
             explode(node.children[i])
-            // s = stringify(node)
           }
-          return s && 'split'
+          return 'split'
         }
       } else {
-        if ((r = dive(node.children[i], wentDown = depth + 1)) /* === 'explode' */) {
+        if ((r = dive(node.children[i], wentDown = depth + 1)) ) {
           return r
         }
       }
@@ -159,7 +156,7 @@ const reduce = (object, mode) => {
     }
 
     if (!wentDown) {
-      if (depth >= 4 /* && mode !== 'split' */) {
+      if (depth >= 4 ) {
         return explode(node) || 'explode'
       }
     }
@@ -171,14 +168,9 @@ const reduce = (object, mode) => {
 }
 
 const reduceAll = (node) => {
-  let isChanged = false, s0 = '!', s1 = '!' // stringify(node)
+  let isChanged = false
 
-  for (let m, mode = undefined; (s0 = s1) && (m = reduce(node, mode)) || mode; mode = m) {
-    /* s1 = stringify(node)
-    if (s1 === '[ [ [ [ 5, 11 ], [ 13, 0 ] ], [ [ 15, 14 ], [ 14, 0 ] ] ], [ [ 2, [ 0, < 11, 4 > ] ], [ [ < 6, 7 >, 1 ], [ 7, < 1, 6 > ] ] ] ]') {
-      s1 += ''
-    } */
-    mode = s0 && s1 && m
+  for (let m, mode = undefined; (m = reduce(node, mode)) || mode; mode = m) {
     isChanged = isChanged || Boolean(m)
   }
 
@@ -216,70 +208,31 @@ const getMagnitude = (node) => {
 
 /**
  * @param {TNode[]} input
- * @param {TOptions} options
  */
-const puzzle1 = (input, options) => {
-  let result = nil, s0, s1 = '!'
+const puzzle1 = (input) => {
+  let result = nil
 
   for (let i = 0, entry; (entry = cloneDeep(input[i])); ++i) {
-    // s0 = stringify(entry)
     result = result ? add(result, entry) : entry
-    // result = reduceAll(entry).node
-    // s1 = s0 && stringify(result)
-    i += 0
   }
-  return s1 && getMagnitude(result)
-}
-
-/**
- * @param {string[] | string} array
- * @return {string[]  |null}
- */
-const permute = (array) => {
-  //  NB: Our strings contain unique chars only and are lexicographically ordered initially.
-  array = Array.from(array)
-
-  for (let i, k = array.length - 1, v; --k >= 0;) {
-    if ((v = array[k]) < array[k + 1]) {
-      for (i = array.length; --i > k;) {
-        if (array[k] < array[i]) {
-          array[k] = array[i], array[i] = v
-          v = array.slice(k + 1).reverse()
-          array = array.slice(0, k + 1)
-          array = array.concat(v)
-          return array
-        }
-      }
-    }
-  }
-  return null
+  return getMagnitude(result)
 }
 
 /**
  * @param {TNode[]} input
- * @param {boolean} isDemo
  */
-const puzzle2 = (input, { isDemo }) => {
-  if(!isDemo) return
+const puzzle2 = (input) => {
   const { length } = input
-  let numbers = [], set = new Set(), pairs = [], largest = 0
+  let set = new Set(), pairs = [], largest = 0
 
   for (let i = 0; i < length; ++i) {
-    numbers.push(i)
-  }
-
-  const addPairs = () => {
-    for (let i = 0, last = numbers[length - 1], key, v; i < length; ++i, last = v) {
-      if (!set.has(key = last + ',' + (v = numbers[i]))) {
-        set.add(key)
-        pairs.push([last, v])
+    for (let j = 0, k; j < length; ++j) {
+      if (j !== i) {
+        if (!set.has(k = i + ',' + j)) set.add(k), pairs.push([i, j])
+        if (!set.has(k = j + ',' + i)) set.add(k), pairs.push([j, i])
       }
     }
   }
-
-  do {
-    addPairs()
-  } while ((numbers = permute(numbers)))
 
   for (let i = 0, pair, v; (pair = pairs[i]); ++i) {
     if ((v = getMagnitude(add(cloneDeep(input[pair[0]]), cloneDeep(input[pair[1]])))) > largest) {
@@ -318,23 +271,13 @@ rawInput[1] = `
 `  /* Here's a slightly larger example */
 
 /* rawInput[1] = `
-[[[[[9,8],1],2],3],4]
-[7,[6,[5,[4,[3,2]]]]]
-[[6,[5,[4,[3,2]]]],1]
-[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]
-[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]
-`  /* examples of a single explode action */
-
-/* rawInput[1] = `
 [[[[4,3],4],4],[7,[[8,4],9]]]
 [1,1]
 `  /* finding the reduced result */
 
-//  Uncomment the next line to disable demo for puzzle2 or to define different demo for it.
-//  rawInput[2] = ``
-
 module.exports = { parse, puzzles: [puzzle1, puzzle2] }
 
 /*
-"demo": { "1": { "value": 4140, "time": 7943 }, "2": { "value": 3993, "time": 4019407 } }
+"demo": { "1": { "value": 4140, "time": 7855 }, "2": { "value": 3993, "time": 9030 } },
+"main": { "1": { "value": 4469, "time": 16452 }, "2": { "value": 4770, "time": 379418 } }
  */
