@@ -18,14 +18,12 @@ const readFile = (path) => {
 }
 
 //  The `name` should be module.filename or exact name of file in data directory.
-const loadData = (name) => {
-  const path = resolve('data', /\.js$/.test(name) ? basename(name, '.js') + '.txt' : name)
-  const data = readFile(path)
+const loadData = (moduleName, suffix = '') => {
+  let path = basename(moduleName, '.js')
 
-  if (data === undefined) {
-    say(`\n***** ENOENT: ${path}\n`)
-  }
-  return data
+  assert(path, 'Bad moduleName loadData(%s)', moduleName)
+
+  return readFile(path = resolve('data', path + suffix + '.txt'))
 }
 
 /**
@@ -35,7 +33,7 @@ const loadData = (name) => {
  * assert: ((function(...[*]=): void) & {beforeThrow: function(*=): ((function(*))|undefined)}),
  * readFile: (function(string): (string|undefined)),
  * usecsFrom: (function(number): number),
- * loadData: (function(string): (string|undefined)),
+ * loadData: (function(string,[string]): (string|undefined)),
  * say: (function(string): boolean)
  * }}
  */
