@@ -9,7 +9,7 @@
   "license": "MIT",
   "keywords": [],
   "scripts": {
-    "lint": "eslint ./*.js ./core/*.js",
+    "lint": "eslint ./d*.js ./core/*.js",
     "purge": "rimraf node_modules reports",
     "test": "jest --config test/jest.config.js"
   },
