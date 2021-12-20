@@ -2,7 +2,7 @@
 module.exports = {
   bail: 1,
   collectCoverage: true,
-  collectCoverageFrom: ['core/index.js'],
+  collectCoverageFrom: ['core/a*.js', 'core/i*.js'],
   coverageDirectory: 'reports',
   rootDir: '..'
 }

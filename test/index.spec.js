@@ -70,11 +70,11 @@ it('should run [demo] d', () => {
   expect(run([nil, 'D'], { useDemo: true })).toEqual({ dsns: [1, 2], puzzles: ['1:D', '2:D'] })
 })
 
-it('should run [demo, aux] d', () => {
+xit('should run [demo, aux] d', () => {
   expect(run([nil, 'D', 'X'], { useDemo: true })).toEqual({ dsns: [1, 2], puzzles: ['1:D', '2:X'] })
 })
 
-it(`should run [demo, aux=''] d`, () => {
+xit(`should run [demo, aux=''] d`, () => {
   expect(run([nil, 'D', ''], { useDemo: true })).toEqual({ dsns: [1, 2], puzzles: ['1:D'] })
 })
 
