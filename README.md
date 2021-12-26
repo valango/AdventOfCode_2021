@@ -34,6 +34,10 @@ simple simulation resulted in 💥 explosion on part 2 and the correct solution 
 * `day 18:` Lost insane amount of time because of stupid mistake: the puzzle hung up, so I
 was sure it is because of complexity, but the real reason was I had chosen a wrong way
   for data preparation, so the actual puzzle did not even start... doh.
+* `day 25:` After struggling through massive maelström 🌪 of Santa, Sauerkraut and other stuff,
+  I finally made it back to AoC on Dec-26th!<br>
+  Now, the part #1 was surprisingly simple, but to open the #2,
+  I need to clear all the pending puzzles from days 17 and 19-24 first! 😳
 
 ## Track record
 
@@ -62,6 +66,7 @@ first one, taken from
 | 16 | 6503 | 03:47:12  | 6251 | 04:41:06 |6270|1290|
 | 17 | 13740 |  07:57:44 |   |  | | |
 | 18 | 8060 | 11:51:28  | 11314 | 17:57:49 |11326|281|
+| 25 | 10309 |  >24h |   |  | 6259 | 4060 |
 
 ![](quote.png)
 
@@ -92,8 +97,8 @@ The following report was generated using command `./run abm`.
 |14|2988|3572761917024|1588|2188189693529|306|2730|374|328|
 |15|613|2899|40|315|30914|1553300|1044|10114|
 |16|923|258888628940|6,9,14,16,12,23,31|3,54,7,9,1,0,0,1|588|475|630|95|
-|17|
 |18|4469|4770|4140|3993|15882|393053|8026|9140|
+|25|568| |58| |192101| |2636| |
 
 ### Usage
 
