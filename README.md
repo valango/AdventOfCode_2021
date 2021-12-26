@@ -30,6 +30,8 @@ simple simulation resulted in 💥 explosion on part 2 and the correct solution 
   the working solution was to just flood the whole field with cumulative risk values.
   I bet the algorithm can still be improved.
 * `day 16:` That was fun!
+* `day 17:` Mistakenly left off one character when copy-pasting input data and was about to
+nuke my own brains trying to figure out how to solve the part #2! 🤬
 
 ## Track record
 
@@ -56,6 +58,7 @@ first one, taken from
 | 14 | 11437 | 02:07:05  | 16267 | 08:17:38 |18245|9021|
 | 15 | 11538 | 04:58:08  | 9372 | 06:00:22 |9388|3618|
 | 16 | 6503 | 03:47:12  | 6251 | 04:41:06 |6270|1290|
+| 17 | 13740 | 07:57:44  | 25251 | >24h | | |
 
 ![](quote.png)
 
@@ -86,6 +89,7 @@ The following report was generated using command `./run abm`.
 |14|2988|3572761917024|1588|2188189693529|306|2730|374|328|
 |15|613|2899|40|315|30914|1553300|1044|10114|
 |16|923|258888628940|6,9,14,16,12,23,31|3,54,7,9,1,0,0,1|588|475|630|95|
+|17|9180|3767|45|112|10698|7593|336|6362|
 
 ### Usage
 
