@@ -43,7 +43,7 @@ const parse = (dsn) => {
  * @param {TPoint}  pointB
  * @return {TPoint} squared distances by all 3 projections
  */
-const getDistances = ([x, y, z], pointB) => {
+const getDistances2 = ([x, y, z], pointB) => {
   x -= pointB[0], y -= pointB[1], z -= pointB[2]
   x *= x, y *= y, z *= z
 
@@ -59,7 +59,7 @@ const composeBlock = (pointReadings) => {
 
   for (let i = 0; i < scans.length; ++i) {
     for (let j = 0; j < i; ++j) {
-      diffs.push(getDistances(pointReadings[i], pointReadings[j]))
+      diffs.push(getDistances2(pointReadings[i], pointReadings[j]))
       pairs.push([j, i])
     }
   }
@@ -70,7 +70,7 @@ const composeBlock = (pointReadings) => {
 const doSetsMatch = (a, b) => {
   let b1 = b.slice(0, 3), n = b1.length
 
-  for (let iA = 0, iB, vA; iA < 3; ++iA) {
+  for (let iA = 0, iB; iA < 3; ++iA) {
     if ((iB = b1.indexOf(a[iA])) >= 0 && iB < 3) {
       b1[iB] = undefined, --n
     }
@@ -101,18 +101,18 @@ const findSimilarPairs = (blockA, blockB) => {
   const indexesA = [], indexesB = [], idxA = [], idxB = []
 
   for (let i = 0, dA; (dA = blockA.diffs[i]); i += 1) {
-    for (let j = 0, dB, v; (dB = blockB.diffs[j]); j += 1) {
+    for (let j = 0, dB; (dB = blockB.diffs[j]); j += 1) {
       if (doSetsMatch(dA, dB)) {
         indexesA.push(...blockA.pairs[i])
         indexesB.push(...blockB.pairs[j])
       }
     }
   }
-  //  The best transform must have at least 12 fits.
-  for (let i = 0, indexA, indexB, a, b, c; (indexA = indexesA[i]) !== undefined; ++i) {
+
+  for (let i = 0, indexA, indexB, a, b; (indexA = indexesA[i]) !== undefined; ++i) {
     if (!idxA.includes(indexA)) {
       if ((a = indexesOfPairsContaining(indexA, indexesA, i)).length > 1) {
-        b = c = undefined
+        b = undefined
         if (!idxB.includes(indexB = indexesB[i])) {
           if ((b = indexesOfPairsContaining(indexB, indexesB, 0)).length > 1) {
             if (intersection(a, b).length > 1) {
@@ -135,16 +135,14 @@ const findSimilarPairs = (blockA, blockB) => {
   }
 
   if (idxA.length >= 12) {
-    let r = findRotation(blockA.scans[idxA[0]], blockA.scans[idxA[1]],
+    const r = findRotation(blockA.scans[idxA[0]], blockA.scans[idxA[1]],
       blockB.scans[idxB[0]], blockB.scans[idxB[1]])
-    let q = findRotation(blockA.scans[idxA[1]], blockA.scans[idxA[2]],
-      blockB.scans[idxB[1]], blockB.scans[idxB[2]])
     assert(r !== undefined)
-    assert(r === q)
-    let points = blockB.scans.map(p => rotate(p, r))
-    const offs = getOffset(points[idxB[0]], blockA.scans[idxA[0]])
-    points = points.map(p => shift(p, offs))
-    blockB.scans = points
+
+    const points = blockB.scans.map(p => rotate(p, r))
+    const offs = getOffset(blockA.scans[idxA[0]], points[idxB[0]])
+
+    blockB.scans = points.map(p => shift(p, reverse(offs)))
     blockB.rotation = r
     blockB.offset = offs
     return true
@@ -153,13 +151,12 @@ const findSimilarPairs = (blockA, blockB) => {
 }
 
 /**
- * @param {TPoint[][]} input - a block contains scans from one scanner.
- * @return {TPoint[]} beacons
+ * @param {{beacons: TPoint[], blocks: TBlock[], scanBlocks:TPoint[][]}} input
  */
 const solve1 = (input) => {
   let was
   /** @type {TBlock[]} */
-  const blocks = input.map(composeBlock)
+  const blocks = input.scanBlocks.map(composeBlock)
 
   blocks[0].rotation = 0
 
@@ -187,27 +184,30 @@ const solve1 = (input) => {
     }
   }
 
-  return beacons
+  input.beacons = beacons
+  input.blocks = blocks
+
+  return input
 }
 
 /**
- * @param {{beacons: TPoint[], scanBlocks:TPoint[][]}} input
+ * @param {{beacons: TPoint[], blocks: TBlock[], scanBlocks:TPoint[][]}} input
  */
 const puzzle1 = (input) => {
-  return (input.beacons = solve1(input.scanBlocks)).length
+  return solve1(input).beacons.length
 }
 
 const manhattan = ([a, b, c], [d, e, f]) => abs(a - d) + abs(b - e) + abs(c - f)
 
 /**
- * @param {TPoint[]} beacons
+ * @param {TBlock[]} blocks
  */
-const puzzle2 = ({ beacons }) => {
+const puzzle2 = ({ blocks }) => {
   let longest = 0
 
-  for (let i = 0; i < beacons.length; ++i) {
+  for (let i = 0; i < blocks.length; ++i) {
     for (let j = 0; j < i; ++j) {
-      longest = max(longest, manhattan(beacons[i], beacons[j]))
+      longest = max(longest, manhattan(blocks[i].offset, blocks[j].offset))
     }
   }
 
@@ -215,8 +215,3 @@ const puzzle2 = ({ beacons }) => {
 }
 
 module.exports = { parse, puzzles: [puzzle1, puzzle2] }
-
-/*
- */
-
-/** @type Map<number,number[]> */

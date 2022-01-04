@@ -34,6 +34,7 @@ simple simulation resulted in 💥 explosion on part 2 and the correct solution 
 * `day 18:` Lost insane amount of time because of stupid mistake: the puzzle hung up, so I
 was sure it is because of complexity, but the real reason was I had chosen a wrong way
   for data preparation, so the actual puzzle did not even start... doh.
+* `day 19:` This was horrible - I am so hopelessly bad with spatial algebra.
 
 ## Track record
 
@@ -94,6 +95,7 @@ The following report was generated using command `./run abm`.
 |16|923|258888628940|6,9,14,16,12,23,31|3,54,7,9,1,0,0,1|588|475|630|95|
 |17|
 |18|4469|4770|4140|3993|15882|393053|8026|9140|
+|19|332|8507|79|3621|2230650|215|141873|224|
 
 ### Usage
 
