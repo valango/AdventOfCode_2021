@@ -8,4 +8,4 @@ yarn.lock
 *.bak
 *.log
 *.tmp
-*recent.js
+temp.*

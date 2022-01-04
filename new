@@ -1,0 +1,11 @@
+if [ "$1" = "" ]; then
+  >&2 echo 'Usage: ./new <day-name>   # e.g. ./new day01'
+  exit 1
+fi
+if [ -f $1.js ]; then
+  >&2 echo "Exists already: $1.js"
+  exit 1
+fi
+cp template.js $1.js
+touch temp.js
+touch data/temp.$1.txt

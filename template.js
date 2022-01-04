@@ -12,19 +12,18 @@ const parse = (dsn) => {
   return data   //  NOTE: The runner will distinguish between undefined and falsy!
 }
 
+/** @typedef {*} TData */
+
 /**
- * @param {*[]} input
+ * @param {TData[]} input
  * @param {TOptions} options
  */
 const puzzle1 = (input, options) => {
-  return undefined
+  return options && undefined
 }
 
-/**
- * @param {*[]} input
- * @param {TOptions} options
- */
-const puzzle2 = (input, options) => {
+/** @param {TData[]} input */
+const puzzle2 = (input) => {
   return undefined
 }
 
