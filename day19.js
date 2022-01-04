@@ -34,6 +34,9 @@ const parse = (dsn) => {
  * [rotation]: number,
  * scans: TPoint[]
  * }} TBlock
+ *
+ * The diffs are 3D projections of distances between all possible point pairs.
+ * Matching those against diffs from another scanner is where the solution starts.
  */
 
 /**
