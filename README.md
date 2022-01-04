@@ -35,7 +35,7 @@ nuke my own brains trying to figure out how to solve the part #2! 🤬
 * `day 18:` Lost insane amount of time because of stupid mistake: the puzzle hung up, so I
 was sure it is because of complexity, but the real reason was I had chosen a wrong way
   for data preparation, so the actual puzzle did not even start... doh.
-* `day 19:` This was horrible - I am so hopelessly bad with spatial algebra.
+* `day 19:` This was horrible - I just could not visualize the situation. 🥶
 * `day 25:` After struggling through massive maelström 🌪 of Santa, Sauerkraut and other stuff,
   I finally made it back to AoC on Dec-26th!<br>
   Now, the part #1 was surprisingly simple, but to open the #2,
