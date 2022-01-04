@@ -3,6 +3,7 @@
 const { findRotation, getOffset, reverse, rotate, shift } = require('./day19rotations')
 const { assert, loadData, parseInt } = require('./core/utils')
 const { intersection } = require('lodash')
+const { abs, max } = Math
 const rawInput = [loadData(module.filename), loadData(module.filename, 'demo')]
 
 const parse = (dsn) => {
@@ -19,7 +20,7 @@ const parse = (dsn) => {
         }
       }
     }
-    return data
+    return { beacons: undefined, scanBlocks: data }
   }
 }
 
@@ -28,7 +29,9 @@ const parse = (dsn) => {
 /**
  * @typedef {{
  * diffs: TPoint[],
+ * [offset]: TPoint,
  * pairs: [number, number][]
+ * [rotation]: number,
  * scans: TPoint[]
  * }} TBlock
  */
@@ -47,8 +50,6 @@ const getDistances = ([x, y, z], pointB) => {
   return [y + z, x + z, x + y]
 }
 
-const pointsDiff = ([a, b, c], [d, e, f]) => [a - d, b - e, c - f]
-
 /**
  * @param {[number, number, number][]} pointReadings
  * @return {TBlock}
@@ -63,7 +64,7 @@ const composeBlock = (pointReadings) => {
     }
   }
 
-  return { diffs, pairs, scans }
+  return { diffs, offset: [0, 0, 0], pairs, rotation: undefined, scans }
 }
 
 const doSetsMatch = (a, b) => {
@@ -144,34 +145,73 @@ const findSimilarPairs = (blockA, blockB) => {
     const offs = getOffset(points[idxB[0]], blockA.scans[idxA[0]])
     points = points.map(p => shift(p, offs))
     blockB.scans = points
+    blockB.rotation = r
+    blockB.offset = offs
+    return true
   }
-  return 0
+  return false
 }
 
 /**
  * @param {TPoint[][]} input - a block contains scans from one scanner.
+ * @return {TPoint[]} beacons
  */
 const solve1 = (input) => {
+  let was
+  /** @type {TBlock[]} */
   const blocks = input.map(composeBlock)
 
-  for (let i = 0; i < blocks.length; ++i) {
-    for (let j = 0; j < i; ++j) {
-      findSimilarPairs(blocks[i], blocks[j])
+  blocks[0].rotation = 0
+
+  do {
+    was = false
+
+    for (let i = 0; i < blocks.length; ++i) {
+      if (blocks[i].rotation !== undefined) {
+        for (let j = 0; j < blocks.length; ++j) {
+          if (j !== i && blocks[j].rotation === undefined) {
+            was |= findSimilarPairs(blocks[i], blocks[j])
+          }
+        }
+      }
+    }
+  } while (was)
+
+  const beacons = []
+
+  for (const block of blocks) {
+    for (const [x, y, z] of block.scans) {
+      if (!beacons.find(([a, b, c]) => a === x && b === y && c === z)) {
+        beacons.push([x, y, z])
+      }
     }
   }
-  return 0
+
+  return beacons
 }
 
 /**
- * @param {TPoint[][]} input
- * @param {TOptions} options
+ * @param {{beacons: TPoint[], scanBlocks:TPoint[][]}} input
  */
-const puzzle1 = (input, options) => {
-  return options && solve1(input)
+const puzzle1 = (input) => {
+  return (input.beacons = solve1(input.scanBlocks)).length
 }
 
-const puzzle2 = () => {
-  return undefined
+const manhattan = ([a, b, c], [d, e, f]) => abs(a - d) + abs(b - e) + abs(c - f)
+
+/**
+ * @param {TPoint[]} beacons
+ */
+const puzzle2 = ({ beacons }) => {
+  let longest = 0
+
+  for (let i = 0; i < beacons.length; ++i) {
+    for (let j = 0; j < i; ++j) {
+      longest = max(longest, manhattan(beacons[i], beacons[j]))
+    }
+  }
+
+  return longest
 }
 
 module.exports = { parse, puzzles: [puzzle1, puzzle2] }
